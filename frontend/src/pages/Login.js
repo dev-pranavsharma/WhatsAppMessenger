@@ -7,7 +7,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
  * @param {Object} props - Component props
  * @param {Function} props.onLogin - Login handler function
  */
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin,onRegister }) => {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -35,23 +35,28 @@ const Login = ({ onLogin }) => {
    * Handle form submission
    * @param {Event} e - Form submit event
    */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      const result = await onLogin(formData);
-      if (!result.success) {
-        setError(result.error || 'Login failed');
-      }
-    } catch (err) {
-      setError('An unexpected error occurred');
-    } finally {
-      setLoading(false);
+  try {
+    const result = isRegister
+      ? await onRegister(formData)   // call registration handler
+      : await onLogin(formData);     // call login handler
+
+    if (!result.success) {
+      setError(result.error || (isRegister ? 'Registration failed' : 'Login failed'));
     }
-  };
+  } catch (err) {
+    setError('An unexpected error occurred');
+  } finally {
+    setLoading(false);
+  }
+};
 
+  console.log(formData);
+  
   /**
    * Toggle password visibility
    */

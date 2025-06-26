@@ -78,6 +78,7 @@ export const updateUserProfile = async (req, res) => {
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password, business_name } = req.body;
+    console.log(req.body);
     
     // Validate required fields
     if (!username || !email || !password) {
@@ -104,7 +105,7 @@ export const registerUser = async (req, res) => {
       VALUES (?, ?, ?, ?)
     `;
     
-    const result = await executeQuery(insertQuery, [username, email, hashedPassword, business_name]);
+    const result = await executeQuery(insertQuery, [username, email, hashedPassword, business_name??null]);
     
     // Return user data (without password)
     const newUser = await executeQuery(`

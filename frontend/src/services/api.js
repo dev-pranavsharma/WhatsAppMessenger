@@ -76,6 +76,10 @@ export const userService = {
     body: credentials,
   }),
 
+  register :(credentials) => apiRequest('/users/register',{
+    method:'POST',
+    body:credentials
+  }),
   /**
    * Logout current user
    * @returns {Promise<Object>} Logout confirmation

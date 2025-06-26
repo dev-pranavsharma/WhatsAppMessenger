@@ -56,7 +56,15 @@ function App() {
       return { success: false, error: error.message };
     }
   };
-
+  const handleRegister = async(credentials)=>{
+    try {
+      const userData = await userService.register(credentials);
+      setUser(userData.user);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
   /**
    * Handle user logout
    */
@@ -89,7 +97,7 @@ function App() {
 
   // Show login page if user is not authenticated
   if (!user) {
-    return <Login onLogin={handleLogin} />;
+    return <Login onRegister={handleRegister} onLogin={handleLogin} />;
   }
 
   // Main authenticated application layout
