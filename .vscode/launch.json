@@ -9,7 +9,8 @@
       "args": ["server/index.ts"],
       "env": {
         "NODE_ENV": "development",
-        "PORT": "3000"
+        "PORT": "3000",
+        "HOST": "localhost"
       },
       "console": "integratedTerminal",
       "restart": true,

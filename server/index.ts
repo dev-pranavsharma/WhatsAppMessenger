@@ -59,18 +59,20 @@ app.use((req, res, next) => {
   // Default to port 5000, but allow customization via environment variable
   // This helps with Mac compatibility where port 5000 might be used by AirPlay
   const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  const host = process.env.HOST || "0.0.0.0";
+  // Use localhost for Mac compatibility instead of 0.0.0.0
+  const host = process.env.HOST || (process.platform === 'darwin' ? 'localhost' : '0.0.0.0');
   
-  server.listen({
-    port,
-    host,
-    reusePort: true,
-  }, () => {
+  server.listen(port, host, () => {
     log(`serving on port ${port}`);
   }).on('error', (err: any) => {
     if (err.code === 'EADDRINUSE') {
       log(`Port ${port} is in use. On Mac, try a different port or stop AirPlay Receiver in System Preferences.`);
       process.exit(1);
+    } else if (err.code === 'ENOTSUP') {
+      log(`Network operation not supported. Retrying with localhost...`);
+      server.listen(port, 'localhost', () => {
+        log(`serving on localhost:${port}`);
+      });
     } else {
       throw err;
     }
