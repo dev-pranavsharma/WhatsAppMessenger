@@ -19,8 +19,8 @@ fi
 if lsof -Pi :5000 -sTCP:LISTEN -t >/dev/null ; then
     echo "Port 5000 is busy (likely AirPlay), using port 3000 instead"
     echo "App will be available at: http://localhost:3000"
-    PORT=3000 HOST=localhost npm run dev
+    PORT=3000 HOST=127.0.0.1 npm run dev
 else
     echo "App will be available at: http://localhost:5000"
-    HOST=localhost npm run dev
+    HOST=127.0.0.1 npm run dev
 fi
