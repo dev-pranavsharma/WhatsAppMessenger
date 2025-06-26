@@ -106,7 +106,25 @@ npm run start  # Runs production server
 ```
 
 ## Changelog
-- June 25, 2025. Initial setup
+- June 26, 2025: Added Mac compatibility features including flexible port configuration, setup script, and comprehensive documentation
+- June 25, 2025: Initial setup
+
+## Mac Compatibility Features
+
+### Port Management
+- Added flexible port configuration via environment variables
+- Handles Mac-specific port 5000 conflicts (AirPlay Receiver)
+- Provides helpful error messages for port conflicts
+
+### Setup Tools
+- Created `setup-mac.sh` script for automated Mac environment setup
+- Added `.env.example` with Mac-specific configurations
+- Created comprehensive README.md with Mac setup instructions
+
+### Cross-Platform Improvements
+- Enhanced error handling for common Mac development issues
+- Added Node.js version checking and guidance
+- Documented troubleshooting steps for Mac-specific problems
 
 ## User Preferences
 
