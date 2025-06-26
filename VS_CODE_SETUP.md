@@ -51,11 +51,13 @@ PORT=3000 npm run dev
 
 **Method 1: Using Terminal**
 ```bash
-# If port 5000 is available
-npm run dev
+# For Mac compatibility (recommended)
+PORT=3000 HOST=127.0.0.1 npm run dev
+```
 
-# If port 5000 is busy, use port 3000
-PORT=3000 npm run dev
+**Method 2: Quick Start Script**
+```bash
+./start-mac.sh
 ```
 
 **Method 2: Using VS Code Tasks**
