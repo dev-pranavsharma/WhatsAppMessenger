@@ -1,0 +1,264 @@
+import { executeQuery } from '../config/database.js';
+import bcrypt from 'bcryptjs';
+
+/**
+ * Get user profile by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    const query = `
+      SELECT id, username, email, whatsapp_business_id, phone_number, 
+             business_name, is_verified, created_at, updated_at
+      FROM users 
+      WHERE id = ?
+    `;
+    
+    const users = await executeQuery(query, [userId]);
+    
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json(users[0]);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Update user profile
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { username, email, phone_number, business_name } = req.body;
+    
+    // Check if user exists
+    const existingUser = await executeQuery('SELECT id FROM users WHERE id = ?', [userId]);
+    if (existingUser.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update user profile
+    const updateQuery = `
+      UPDATE users 
+      SET username = ?, email = ?, phone_number = ?, business_name = ?, updated_at = NOW()
+      WHERE id = ?
+    `;
+    
+    await executeQuery(updateQuery, [username, email, phone_number, business_name, userId]);
+    
+    // Fetch updated user profile
+    const updatedUser = await executeQuery(`
+      SELECT id, username, email, whatsapp_business_id, phone_number, 
+             business_name, is_verified, created_at, updated_at
+      FROM users 
+      WHERE id = ?
+    `, [userId]);
+    
+    res.json(updatedUser[0]);
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Register new user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const registerUser = async (req, res) => {
+  try {
+    const { username, email, password, business_name } = req.body;
+    
+    // Validate required fields
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Username, email, and password are required' });
+    }
+    
+    // Check if user already exists
+    const existingUser = await executeQuery(
+      'SELECT id FROM users WHERE username = ? OR email = ?', 
+      [username, email]
+    );
+    
+    if (existingUser.length > 0) {
+      return res.status(409).json({ message: 'Username or email already exists' });
+    }
+    
+    // Hash password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    
+    // Insert new user
+    const insertQuery = `
+      INSERT INTO users (username, email, password, business_name)
+      VALUES (?, ?, ?, ?)
+    `;
+    
+    const result = await executeQuery(insertQuery, [username, email, hashedPassword, business_name]);
+    
+    // Return user data (without password)
+    const newUser = await executeQuery(`
+      SELECT id, username, email, business_name, is_verified, created_at
+      FROM users 
+      WHERE id = ?
+    `, [result.insertId]);
+    
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: newUser[0]
+    });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Login user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const loginUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Validate required fields
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+    
+    // Find user by username or email
+    const userQuery = `
+      SELECT id, username, email, password, whatsapp_business_id, phone_number, 
+             business_name, is_verified
+      FROM users 
+      WHERE username = ? OR email = ?
+    `;
+    
+    const users = await executeQuery(userQuery, [username, username]);
+    
+    if (users.length === 0) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    
+    const user = users[0];
+    
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    
+    // Remove password from response
+    delete user.password;
+    
+    // Store user in session
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    
+    res.json({
+      message: 'Login successful',
+      user: user
+    });
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Logout user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const logoutUser = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).json({ message: 'Could not log out' });
+    }
+    
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Logged out successfully' });
+  });
+};
+
+/**
+ * Update WhatsApp business configuration
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const updateWhatsAppConfig = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { whatsapp_business_id, access_token, phone_number } = req.body;
+    
+    // Update WhatsApp configuration
+    const updateQuery = `
+      UPDATE users 
+      SET whatsapp_business_id = ?, access_token = ?, phone_number = ?, 
+          is_verified = TRUE, updated_at = NOW()
+      WHERE id = ?
+    `;
+    
+    await executeQuery(updateQuery, [whatsapp_business_id, access_token, phone_number, userId]);
+    
+    // Fetch updated user profile
+    const updatedUser = await executeQuery(`
+      SELECT id, username, email, whatsapp_business_id, phone_number, 
+             business_name, is_verified, created_at, updated_at
+      FROM users 
+      WHERE id = ?
+    `, [userId]);
+    
+    res.json({
+      message: 'WhatsApp configuration updated successfully',
+      user: updatedUser[0]
+    });
+  } catch (error) {
+    console.error('Error updating WhatsApp configuration:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Get current authenticated user
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getCurrentUser = async (req, res) => {
+  try {
+    if (!req.session.userId) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+    
+    const query = `
+      SELECT id, username, email, whatsapp_business_id, phone_number, 
+             business_name, is_verified, created_at, updated_at
+      FROM users 
+      WHERE id = ?
+    `;
+    
+    const users = await executeQuery(query, [req.session.userId]);
+    
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json(users[0]);
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
