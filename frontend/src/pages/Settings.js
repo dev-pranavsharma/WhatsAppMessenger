@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Key, User, Smartphone, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
 import { userService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import FacebookLoginButton from '../components/FBLoginButton';
 
 /**
  * Settings page component for user profile and WhatsApp configuration
@@ -124,7 +125,6 @@ const Settings = ({ user, onUserUpdate }) => {
       setSaving(false);
     }
   };
-
   /**
    * Tab configuration
    */
@@ -397,7 +397,7 @@ const Settings = ({ user, onUserUpdate }) => {
                   </form>
                 </div>
               </div>
-
+                  <FacebookLoginButton/>
               {/* Setup guide */}
               <div className="card">
                 <div className="card-header">

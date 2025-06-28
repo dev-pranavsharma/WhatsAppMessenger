@@ -8,10 +8,9 @@ import { testConnection, initializeTables } from './config/database.js';
 
 // Import route modules
 import userRoutes from './routes/user.routes.js';
-import campaignRoutes from './routes/campaign.routes.js';
 import templateRoutes from './routes/template.routes.js';
 import contactRoutes from './routes/contact.routes.js';
-
+import facebookRoutes from './routes/facebook.routes.js'
 // Load environment variables
 dotenv.config();
 
@@ -93,9 +92,9 @@ app.use('/api', (req, res, next) => {
  * Mount all route modules under /api prefix
  */
 app.use('/api/users', userRoutes);
-app.use('/api/campaigns', campaignRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use('/api/facebook',facebookRoutes)
 
 /**
  * Health check endpoint
@@ -120,7 +119,6 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
     endpoints: {
       users: '/api/users',
-      campaigns: '/api/campaigns',
       templates: '/api/templates',
       contacts: '/api/contacts',
       health: '/api/health'
