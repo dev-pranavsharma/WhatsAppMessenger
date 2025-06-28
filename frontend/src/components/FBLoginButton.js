@@ -21,7 +21,7 @@ function FacebookLoginButton() {
         if (response.authResponse) {
           console.log("User logged in", response);
           const accessToken = response.authResponse.accessToken
-          const signupUrl = `https://www.facebook.com/dialog/whatsapp_business_es?app_id=1049671833273088&redirect_uri=https://whats-app-messenger-steel.vercel.app/facebook/callback&access_token=${accessToken}`;
+          const signupUrl = `https://www.facebook.com/dialog/whatsapp_business_es?app_id=1049671833273088&redirect_uri=https://49a8-119-42-59-162.ngrok-free.app/api/facebook/callback&access_token=${accessToken}`;
             window.location.href = signupUrl;
           // Redirect or trigger embedded signup
         } else {
