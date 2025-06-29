@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Key, User, Smartphone, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
 import { userService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import WhatsAppSignupPopup from '../components/WhatsAppES';
 
 /**
  * Settings page component for user profile and WhatsApp configuration
@@ -396,9 +397,9 @@ const Settings = ({ user, onUserUpdate }) => {
                     </div>
                   </form>
                 </div>
-              </div>
-                <a target='__blank' href='https://business.facebook.com/messaging/whatsapp/onboard/?app_id=1049671833273088&config_id=1810701329660457&extras=%7B%22sessionInfoVersion%22%3A%223%22%2C%22version%22%3A%22v3%22%7D'>WhatsApp SIgnup</a>
-              {/* Setup guide */}
+              </div>  
+              <WhatsAppSignupPopup/>              
+            {/* Setup guide */}
               <div className="card">
                 <div className="card-header">
                   <h3 className="font-semibold text-gray-900">Setup Guide</h3>
