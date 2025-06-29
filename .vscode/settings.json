@@ -16,5 +16,8 @@
   },
   "terminal.integrated.env.osx": {
     "NODE_ENV": "development"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }

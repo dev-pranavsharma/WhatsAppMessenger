@@ -11,6 +11,7 @@ import userRoutes from './routes/user.routes.js';
 import templateRoutes from './routes/template.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js'
+import tenantRoutes from './routes/tenants.routes.ts'
 // Load environment variables
 dotenv.config();
 
@@ -94,7 +95,8 @@ app.use('/api', (req, res, next) => {
 app.use('/api/users', userRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/contacts', contactRoutes);
-app.use('/api/facebook',facebookRoutes)
+app.use('/api/facebook',facebookRoutes);
+app.use('/api/tenants',tenantRoutes)
 
 /**
  * Health check endpoint

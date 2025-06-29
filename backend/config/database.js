@@ -23,7 +23,7 @@ const dbConfig = {
  * Create MySQL connection pool
  * @returns {Object} MySQL connection pool
  */
-const pool = mysql.createPool(dbConfig);
+ export const pool = mysql.createPool(dbConfig);
 
 /**
  * Test database connection

@@ -1,12 +1,22 @@
 import React, { useEffect } from "react";
 
 const WhatsAppSignupPopup = () => {
-  const signupUrl = `https://business.facebook.com/messaging/whatsapp/onboard/?app_id=1049671833273088&config_id=1022527426322275&extras=${encodeURIComponent(
-    JSON.stringify({
-      sessionInfoVersion: "3",
-      version: "v3",
-    })
-  )}`;
+    const extras = {
+  sessionInfoVersion: "3",
+  version: "v3",
+  prefill: {
+    business_name: "Pranav's Cafe",
+    business_email: "contact@pranavcafe.com",
+    phone_number: "9876543210",
+    phone_number_code: "+91",
+    first_name: "Pranav",
+    last_name: "Sharma",
+    display_name: "Pranav Cafe",
+    website_url: "https://pranavcafe.com",
+  },
+};
+const encodedExtras = encodeURIComponent(JSON.stringify(extras));
+const signupUrl = `https://business.facebook.com/messaging/whatsapp/onboard/?app_id=1049671833273088&config_id=1022527426322275&extras=${encodedExtras}`;
 
   // Listener for Meta's postMessage
   useEffect(() => {
@@ -26,16 +36,8 @@ const WhatsAppSignupPopup = () => {
   }, []);
 
   const openPopup = () => {
-    const width = 960;
-    const height = 600;
-    const left = window.screenX + (window.outerWidth - width) / 2;
-    const top = window.screenY + (window.outerHeight - height) / 2;
 
-    window.open(
-      signupUrl,
-      "whatsapp_signup_popup",
-      `toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`
-    );
+    window.open(signupUrl);
   };
 
   return (
