@@ -11,6 +11,8 @@ import Settings from './pages/Settings';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import LoadingSpinner from './components/LoadingSpinner';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 /**
  * Main application component with routing and authentication
@@ -132,6 +134,8 @@ function App() {
               <Route path="/templates" element={<Templates user={user} />} />
               <Route path="/contacts" element={<Contacts user={user} />} />
               <Route path="/analytics" element={<Analytics user={user} />} />
+              <Route path='/privacy_policy' element={<PrivacyPolicy/>}/>
+              <Route path='/terms_and_conditions' element={<TermsOfService/>}/>
               <Route path="/settings" element={<Settings user={user} onUserUpdate={setUser} />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>

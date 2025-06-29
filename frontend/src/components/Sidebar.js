@@ -170,7 +170,9 @@ const Sidebar = ({ isOpen, onToggle, user }) => {
       {/* Footer section */}
       {isOpen && (
         <div className="p-4 border-t border-gray-200">
-          <div className="text-xs text-gray-500 text-center">
+          <small className='block'><a href='./privacy_policy' target='__blank'>Privacy Policy</a> </small>
+          <small className='block'><a href='./terms_and_conditions' target='__blank'>Terms & Conditions</a></small>
+          <div className="text-xs mt-10 text-gray-500">
             <p>WhatsApp Campaign Manager</p>
             <p>Version 1.0.0</p>
           </div>

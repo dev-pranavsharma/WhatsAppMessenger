@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 async function FBCallback(req, res){
+  console.log(req.query)
+  console.log(req.body);
+  
   const { code } = req.query;
   const redirectUri = 'https://yourdomain.com/api/facebook/callback';
 

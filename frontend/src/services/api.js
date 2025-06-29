@@ -3,7 +3,7 @@
  * Handles all HTTP requests and response processing
  */
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://49a8-119-42-59-162.ngrok-free.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL+'/api' || 'https://49a8-119-42-59-162.ngrok-free.app/api';
 
 /**
  * Generic API request handler with error handling
