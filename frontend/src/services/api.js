@@ -13,7 +13,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL+'/api' || 'https://49a8-119-4
  */
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+    console.log(url);
+    
   const config = {
     credentials: 'include', // Include cookies for session handling
     headers: {
@@ -339,3 +340,16 @@ export const healthService = {
    */
   checkHealth: () => apiRequest('/health'),
 };
+
+export const tenantService={
+  addTenant:(payload)=>{
+    apiRequest('/tenants/add',{
+      method:"POST",
+      body:payload
+    })
+  },
+  tenantById:(id)=>{
+    apiRequest(`tenants/${id}`)
+  }
+
+}

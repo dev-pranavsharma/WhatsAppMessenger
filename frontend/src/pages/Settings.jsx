@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Key, User, Smartphone, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
-import { userService } from '../services/api';
+import { tenantService, userService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import WhatsAppSignupPopup from '../components/WhatsAppES';
 
@@ -49,7 +49,7 @@ const Settings = ({ user, onUserUpdate }) => {
     setError('');
 
     try {
-      const updatedUser = await userService.updateProfile(user.id, profileForm);
+      const updatedUser = await tenantService.addTenant(profileForm);
       onUserUpdate(updatedUser);
       setSuccess('Profile updated successfully');
     } catch (err) {
@@ -67,7 +67,9 @@ const Settings = ({ user, onUserUpdate }) => {
   ];
   console.log(profileForm);
 
+useEffect(()=>{
 
+},[])
   return (
     <div className="space-y-6">
       {/* Page header */}
