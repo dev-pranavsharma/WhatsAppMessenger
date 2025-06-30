@@ -30,7 +30,6 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.0",
-    "@types/mysql2": "^3.11.0",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
