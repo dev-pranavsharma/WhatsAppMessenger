@@ -1,9 +1,8 @@
 import express from 'express';
-import {AddTenant} from '../controllers/tenants.controller.ts'
+import { AddTenant } from '../controllers/tenants.controller.js';
 
-const routes = express.Router()
+const routes = express.Router();
 
-routes.post('/add',AddTenant)
+routes.post('/add', AddTenant);
 
-
-export default routes
+export default routes;

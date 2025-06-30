@@ -124,6 +124,7 @@ app.get('/api', (req, res) => {
       users: '/api/users',
       templates: '/api/templates',
       contacts: '/api/contacts',
+      tenants: '/api/tenants',
       health: '/api/health'
     }
   });

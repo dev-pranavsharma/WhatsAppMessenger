@@ -1,11 +1,11 @@
-import pool from "../config/database.js";
-import type { email, ErrorResponse , SuccessResponse, phone_number } from "../safety/validators.ts";
+import { pool } from "../config/database.js";
+import type { email, ErrorResponse, SuccessResponse, phone_number } from "../safety/validators.js";
 import type { Request, Response } from 'express';
-import { isEmail,isPhoneNumber } from "../safety/validators.ts";
-import { ResultSetHeader } from "mysql2";
+import { isEmail, isPhoneNumber } from "../safety/validators.js";
+import type { ResultSetHeader } from "mysql2";
 
-type Tenant ={
-    id? : number,
+type Tenant = {
+    id?: number,
     business_name: string,
     business_email: email,
     phone_number: phone_number,
@@ -16,39 +16,52 @@ type Tenant ={
     website_url: string,
 }
 
-export async function AddTenant(req: Request<{}, {}, Tenant>,res:Response){
-    const request = req.body ;
-    const params :Tenant={
-    business_name: request.business_name,
-    business_email: isEmail(request.business_email),
-    phone_number: isPhoneNumber(request.phone_number),
-    phone_number_code: request.phone_number_code,
-    first_name: request.first_name,
-    last_name: request.last_name,
-    display_name: request.display_name,
-    website_url: request.website_url,
-    }
-    try{
-    const query:string = `INSERT INTO tenants (business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-    const [results] = await pool.query<ResultSetHeader>(query,[params.business_name,params.business_email,params.phone_number,params.phone_number_code,params.phone_number,params.first_name,params.last_name,params.display_name,params.website_url])
-    const response: SuccessResponse <{insertedId:number}> ={
-    success: true,
-    message :'tenant created successfully',
-    data:{
-        insertedId:results.insertId
-    }
-};
-    res.status(201).json(response)
-    }catch(error){
+export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
+    const request = req.body;
+    
+    try {
+        const params: Tenant = {
+            business_name: request.business_name,
+            business_email: isEmail(request.business_email),
+            phone_number: isPhoneNumber(request.phone_number),
+            phone_number_code: request.phone_number_code,
+            first_name: request.first_name,
+            last_name: request.last_name,
+            display_name: request.display_name,
+            website_url: request.website_url,
+        };
+
+        const query: string = `INSERT INTO tenants (business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        
+        const [results] = await pool.query<ResultSetHeader>(query, [
+            params.business_name,
+            params.business_email,
+            params.phone_number,
+            params.phone_number_code,
+            params.first_name,
+            params.last_name,
+            params.display_name,
+            params.website_url
+        ]);
+
+        const response: SuccessResponse<{insertedId: number}> = {
+            success: true,
+            message: 'Tenant created successfully',
+            data: {
+                insertedId: results.insertId
+            }
+        };
+
+        res.status(201).json(response);
+    } catch (error: any) {
         const status = error.statusCode || 500;
-        const message = error.message || 'Something went wrong. Please contact support ';
-       const Error:ErrorResponse={
-            status:status,
-            message:message
-       }
-       res.json(Error)
+        const message = error.message || 'Something went wrong. Please contact support';
+        
+        const errorResponse: ErrorResponse = {
+            status: status,
+            message: message
+        };
+        
+        res.status(status).json(errorResponse);
     }
-
-
-
 }
