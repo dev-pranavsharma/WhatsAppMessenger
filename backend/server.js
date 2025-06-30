@@ -11,7 +11,7 @@ import userRoutes from './routes/user.routes.js';
 import templateRoutes from './routes/template.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js';
-import tenantRoutes from './routes/tenants.routes.js';
+import tenantRoutes from './routes/tenants.routes.ts';
 
 // Load environment variables
 dotenv.config();

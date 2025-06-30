@@ -15,7 +15,9 @@ type Tenant = {
     display_name: string,
     website_url: string,
 }
+export async function AllTenants(){
 
+}
 export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
     const request = req.body;
     
@@ -56,6 +58,7 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
     } catch (error: any) {
         const status = error.statusCode || 500;
         const message = error.message || 'Something went wrong. Please contact support';
+        console.log(error);
         
         const errorResponse: ErrorResponse = {
             status: status,
@@ -64,4 +67,29 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
         
         res.status(status).json(errorResponse);
     }
+}
+
+export async function TenantbyID(req:Request,res:Response){
+    try {
+    const tenant_id:string = req.params.id
+    const query:string = 'SELECT * FROM tenants WHERE id=?';
+    const [results] = await pool.query<ResultSetHeader>(query,[tenant_id])
+            const response: SuccessResponse = {
+            success: true,
+            message: null,
+            data: results[0]
+        }
+        res.status(200).json(response);
+    } catch (error) {
+        const status = error.statusCode || 500;
+        const message = error.message || 'Something went wrong. Please contact support';
+        console.error(error);
+        
+        const errorResponse: ErrorResponse = {
+            status: status,
+            message: message
+        }
+        res.status(status).json(errorResponse);
+    }
+
 }

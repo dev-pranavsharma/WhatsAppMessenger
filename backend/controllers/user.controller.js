@@ -10,12 +10,7 @@ export const getUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
     
-    const query = `
-      SELECT id, username, email, whatsapp_business_id, phone_number, 
-             business_name, is_verified, created_at, updated_at
-      FROM users 
-      WHERE id = ?
-    `;
+    const query = `SELECT * users WHERE id = ?`;
     
     const users = await executeQuery(query, [userId]);
     
@@ -139,12 +134,7 @@ export const loginUser = async (req, res) => {
     }
     
     // Find user by username or email
-    const userQuery = `
-      SELECT id, username, email, password, whatsapp_business_id, phone_number, 
-             business_name, is_verified
-      FROM users 
-      WHERE username = ? OR email = ?
-    `;
+    const userQuery = ` SELECT * users WHERE username = ? OR email = ? `;
     
     const users = await executeQuery(userQuery, [username, username]);
     
@@ -167,10 +157,11 @@ export const loginUser = async (req, res) => {
     // Store user in session
     req.session.userId = user.id;
     req.session.username = user.username;
-    
+    if (user.role_id==1)
     res.json({
       message: 'Login successful',
-      user: user
+      user: user,
+
     });
   } catch (error) {
     console.error('Error logging in user:', error);
