@@ -5,23 +5,17 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { testConnection, initializeTables } from './config/database.js';
-
-// Import route modules
 import userRoutes from './routes/user.routes.js';
 import templateRoutes from './routes/template.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js';
 import tenantRoutes from './routes/tenants.routes.ts';
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-/**
- * Security middleware configuration
- */
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -33,10 +27,6 @@ app.use(helmet({
   }
 }));
 
-/**
- * Rate limiting configuration
- * Prevents abuse of API endpoints
- */
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
@@ -47,10 +37,6 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-/**
- * CORS configuration
- * Allow frontend to communicate with backend
- */
 app.use(cors({
   origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
   credentials: true,
@@ -64,25 +50,6 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-/**
- * Session configuration
- * Handles user authentication sessions
- */
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
-
-/**
- * Request logging middleware
- * Logs all API requests for debugging
- */
 app.use('/api', (req, res, next) => {
   const timestamp = new Date().toISOString();
   console.log(`${timestamp} - ${req.method} ${req.path} - IP: ${req.ip}`);

@@ -25,3 +25,8 @@ export function isPhoneNumber(value: unknown): phone_number {
     }
     return value as phone_number;
 }
+
+export type Role = {
+  id: number;
+  role_name: string;
+};

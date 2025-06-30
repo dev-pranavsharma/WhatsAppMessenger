@@ -6,16 +6,20 @@
  * @param {Function} next - Express next function
  */
 export const authMiddleware = (req, res, next) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ 
-      message: 'Authentication required',
-      code: 'UNAUTHORIZED'
-    });
+  const token = req.cookies.sessionToken; // from cookie
+  // OR: const token = req.headers.authorization?.split(' ')[1]; // if using headers
+
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
   }
-  
-  // Add user ID to request for easy access in controllers
-  req.userId = req.session.userId;
-  next();
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+    req.user = decoded; // 👈 attach payload (userId, roleId, username) here
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid token' });
+  }
 };
 
 /**

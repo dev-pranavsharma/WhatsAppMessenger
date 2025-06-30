@@ -3,6 +3,7 @@ import type { email, ErrorResponse, SuccessResponse, phone_number } from "../saf
 import type { Request, Response } from 'express';
 import { isEmail, isPhoneNumber } from "../safety/validators.js";
 import type { ResultSetHeader } from "mysql2";
+import type { Role } from "../safety/types.ts";
 
 type Tenant = {
     id?: number,
@@ -71,15 +72,22 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
 
 export async function TenantbyID(req:Request,res:Response){
     try {
-    const tenant_id:string = req.params.id
-    const query:string = 'SELECT * FROM tenants WHERE id=?';
-    const [results] = await pool.query<ResultSetHeader>(query,[tenant_id])
+        const role_id = req.user.roleId;
+        const tenant_id = req.user.tenant_id;
+      const roleQuery = `SELECT id ,role_name FROM public.roles WHERE id=?`
+      const [results] =  await pool.query<Role []>(roleQuery, [role_id]);
+      console.log('role',results);
+      
+      if (results[0].role_name=='admin'){
+        const tenantquery = `SELECT * FROM tenants WHERE id=?`
+        const [results] = await pool.query<ResultSetHeader>(tenantquery,[tenant_id])
             const response: SuccessResponse = {
             success: true,
             message: null,
             data: results[0]
         }
         res.status(200).json(response);
+        }
     } catch (error) {
         const status = error.statusCode || 500;
         const message = error.message || 'Something went wrong. Please contact support';
