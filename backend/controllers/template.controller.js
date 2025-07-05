@@ -23,7 +23,7 @@ export const getUserTemplates = async (req, res) => {
     const parsedTemplates = templates.map(template => ({
       ...template,
       buttons: template.buttons ? JSON.parse(template.buttons) : null
-    }));
+    }))
     
     res.json(parsedTemplates);
   } catch (error) {

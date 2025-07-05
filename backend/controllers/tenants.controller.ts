@@ -45,7 +45,7 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
             params.last_name,
             params.display_name,
             params.website_url
-        ]);
+        ])
 
         const response: SuccessResponse<{insertedId: number}> = {
             success: true,
@@ -53,8 +53,7 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
             data: {
                 insertedId: results.insertId
             }
-        };
-
+        }
         res.status(201).json(response);
     } catch (error: any) {
         const status = error.statusCode || 500;

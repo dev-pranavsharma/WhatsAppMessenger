@@ -3,7 +3,7 @@ import cors from 'cors';
 import session from 'express-session';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv/config';
 import { testConnection, initializeTables } from './config/database.js';
 import userRoutes from './routes/user.routes.js';
 import templateRoutes from './routes/template.routes.js';
@@ -11,7 +11,6 @@ import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js';
 import tenantRoutes from './routes/tenants.routes.ts';
 
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -113,10 +112,10 @@ app.use('/api/*', (req, res) => {
  */
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
-  
+
   // Don't expose error details in production
   const isDevelopment = process.env.NODE_ENV === 'development';
-  
+
   res.status(err.status || 500).json({
     error: 'Internal Server Error',
     message: isDevelopment ? err.message : 'Something went wrong',
@@ -132,16 +131,16 @@ async function startServer() {
     // Test database connection
     console.log('Testing database connection...');
     const dbConnected = await testConnection();
-    
+
     if (!dbConnected) {
       console.error('Failed to connect to database. Please check your database configuration.');
       process.exit(1);
     }
-    
+
     // Initialize database tables
     console.log('Initializing database tables...');
     await initializeTables();
-    
+
     // Start the server
     app.listen(PORT, () => {
       console.log(`
@@ -152,7 +151,7 @@ async function startServer() {
 📊 API Documentation: http://localhost:${PORT}/api
       `);
     });
-    
+
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);

@@ -74,7 +74,6 @@ export const updateUserProfile = async (req, res) => {
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password, business_name } = req.body;
-    console.log(req.body);
 
     // Validate required fields
     if (!username || !email || !password) {
@@ -82,10 +81,7 @@ export const registerUser = async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await executeQuery(
-      'SELECT id FROM users WHERE username = ? OR email = ?',
-      [username, email]
-    );
+    const existingUser = await executeQuery( 'SELECT id FROM users WHERE username = ? OR email = ?', [username, email] );
 
     if (existingUser.length > 0) {
       return res.status(409).json({ message: 'Username or email already exists' });
@@ -94,21 +90,16 @@ export const registerUser = async (req, res) => {
     // Hash password
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
     // Insert new user
-    const insertQuery = `
-      INSERT INTO users (username, email, password, business_name)
-      VALUES (?, ?, ?, ?)
-    `;
+    const insertQuery = ` INSERT INTO users (username, email, password, business_name) VALUES (?, ?, ?, ?) `;
 
     const result = await executeQuery(insertQuery, [username, email, hashedPassword, business_name ?? null]);
+    // save token
+    const token = jwt.sign({ user_id: result.insertId, username:username,password:hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    const save_token = await executeQuery(`UPDATE users SET refresh_token = ? WHERE id = ?`,[token,result.insertId])
 
     // Return user data (without password)
-    const newUser = await executeQuery(`
-      SELECT id, username, email, business_name, is_verified, created_at
-      FROM users 
-      WHERE id = ?
-    `, [result.insertId]);
+    const newUser = await executeQuery(` SELECT id, username, email, business_name, is_verified, created_at FROM users WHERE id = ? `, [result.insertId]);
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -156,17 +147,17 @@ export const loginUser = async (req, res) => {
     delete user.password;
 
     // Store user in session
-    const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, username: user.username, }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1d' });
-    res.cookie('sessionToken', token, {
+    const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, username: user.username, }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    res.cookie('accessToken', token, {
       httpOnly: true,       // prevents access from JavaScript (XSS safe)
       secure: process.env.NODE_ENV === 'production', // send only over HTTPS in prod
       sameSite: 'strict',   // optional, restricts cross-site requests
       maxAge: 24 * 60 * 60 * 1000 // 1 day
-    }); res.json({
+    }); 
+      res.json({
       message: 'Login successful',
       user: user,
-
-    });
+    })
 
   } catch (error) {
     console.error('Error logging in user:', error);
@@ -227,7 +218,7 @@ export const updateWhatsAppConfig = async (req, res) => {
     console.error('Error updating WhatsApp configuration:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-};
+}
 
 /**
  * Get current authenticated user

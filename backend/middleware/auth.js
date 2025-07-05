@@ -6,7 +6,7 @@
  * @param {Function} next - Express next function
  */
 export const authMiddleware = (req, res, next) => {
-  const token = req.cookies.sessionToken; // from cookie
+  const token = req.cookies.accessToken; // from cookie
   // OR: const token = req.headers.authorization?.split(' ')[1]; // if using headers
 
   if (!token) {
@@ -32,14 +32,14 @@ export const authMiddleware = (req, res, next) => {
 export const ownershipMiddleware = (req, res, next) => {
   const resourceUserId = parseInt(req.params.userId || req.params.id);
   const currentUserId = req.session.userId;
-  
+
   if (resourceUserId !== currentUserId) {
-    return res.status(403).json({ 
+    return res.status(403).json({
       message: 'Access denied',
       code: 'FORBIDDEN'
     });
   }
-  
+
   next();
 };
 
@@ -57,6 +57,6 @@ export const optionalAuthMiddleware = (req, res, next) => {
   } else {
     req.isAuthenticated = false;
   }
-  
+
   next();
 };
