@@ -10,9 +10,10 @@ import templateRoutes from './routes/template.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js';
 import tenantRoutes from './routes/tenants.routes.ts';
-
+import cookieParser from 'cookie-parser';
 
 const app = express();
+app.use(cookieParser());
 const PORT = process.env.PORT || 3001;
 
 app.use(helmet({

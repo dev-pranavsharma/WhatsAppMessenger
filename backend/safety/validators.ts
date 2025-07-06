@@ -13,8 +13,9 @@ export type SuccessResponse<T = any> = {
 }
 
 export function isEmail(value: unknown): email {
-    if (typeof value !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        throw new Error("❌ Invalid email format");
+    
+    if (typeof value !== 'string' || !value.includes('@')) {
+        throw new Error("❌ Invalid email: must contain '@'");
     }
     return value as email;
 }

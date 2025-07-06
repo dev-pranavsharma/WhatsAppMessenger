@@ -2,11 +2,6 @@ import { executeQuery } from '../config/database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-/**
- * Get user profile by ID
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 export const getUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -26,11 +21,6 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-/**
- * Update user profile
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 export const updateUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -66,11 +56,6 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-/**
- * Register new user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password, business_name } = req.body;
@@ -81,7 +66,7 @@ export const registerUser = async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await executeQuery( 'SELECT id FROM users WHERE username = ? OR email = ?', [username, email] );
+    const existingUser = await executeQuery('SELECT id FROM users WHERE username = ? OR email = ?', [username, email]);
 
     if (existingUser.length > 0) {
       return res.status(409).json({ message: 'Username or email already exists' });
@@ -95,8 +80,8 @@ export const registerUser = async (req, res) => {
 
     const result = await executeQuery(insertQuery, [username, email, hashedPassword, business_name ?? null]);
     // save token
-    const token = jwt.sign({ user_id: result.insertId, username:username,password:hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
-    const save_token = await executeQuery(`UPDATE users SET refresh_token = ? WHERE id = ?`,[token,result.insertId])
+    const token = jwt.sign({ user_id: result.insertId, username: username, password: hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    const save_token = await executeQuery(`UPDATE users SET refresh_token = ? WHERE id = ?`, [token, result.insertId])
 
     // Return user data (without password)
     const newUser = await executeQuery(` SELECT id, username, email, business_name, is_verified, created_at FROM users WHERE id = ? `, [result.insertId]);
@@ -111,11 +96,6 @@ export const registerUser = async (req, res) => {
   }
 };
 
-/**
- * Login user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -145,7 +125,7 @@ export const loginUser = async (req, res) => {
 
     // Remove password from response
     delete user.password;
-
+    
     // Store user in session
     const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, username: user.username, }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.cookie('accessToken', token, {
@@ -153,8 +133,8 @@ export const loginUser = async (req, res) => {
       secure: process.env.NODE_ENV === 'production', // send only over HTTPS in prod
       sameSite: 'strict',   // optional, restricts cross-site requests
       maxAge: 24 * 60 * 60 * 1000 // 1 day
-    }); 
-      res.json({
+    });
+    res.json({
       message: 'Login successful',
       user: user,
     })
@@ -165,11 +145,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
-/**
- * Logout user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
+
 export const logoutUser = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -182,11 +158,7 @@ export const logoutUser = (req, res) => {
   });
 };
 
-/**
- * Update WhatsApp business configuration
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
+
 export const updateWhatsAppConfig = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -220,14 +192,9 @@ export const updateWhatsAppConfig = async (req, res) => {
   }
 }
 
-/**
- * Get current authenticated user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 export const getCurrentUser = async (req, res) => {
   try {
-    if (!req.session.userId) {
+    if (!req.user.user_id) {
       return res.status(401).json({ message: 'Not authenticated' });
     }
 
@@ -238,7 +205,7 @@ export const getCurrentUser = async (req, res) => {
       WHERE id = ?
     `;
 
-    const users = await executeQuery(query, [req.session.userId]);
+    const users = await executeQuery(query, [req.user.user_id]);
 
     if (users.length === 0) {
       return res.status(404).json({ message: 'User not found' });

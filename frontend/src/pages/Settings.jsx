@@ -19,6 +19,7 @@ const Settings = ({ user, onUserUpdate }) => {
 
   // Bussiness form state
   const [profileForm, setProfileForm] = useState({
+    id: "",
     business_name: "",
     business_email: "",
     phone_number: "",
@@ -49,7 +50,7 @@ const Settings = ({ user, onUserUpdate }) => {
     setError('');
 
     try {
-      const updatedUser = await tenantService.addTenant(profileForm);
+      const updatedUser = await tenantService.updateTenant(profileForm);
       onUserUpdate(updatedUser);
       setSuccess('Profile updated successfully');
     } catch (err) {
@@ -67,9 +68,24 @@ const Settings = ({ user, onUserUpdate }) => {
   ];
   console.log(profileForm);
 
-useEffect(()=>{
+  useEffect(() => {
+    const getTenantDetails = async () => {
+      try {
+        setLoading(true)
+        const res = await tenantService.tenantById();
+        console.log(res);
 
-},[])
+        setProfileForm(res.data);
+      } catch (err) {
+        setLoading(false)
+        setError(`Failed to update profile: ${err.message}`);
+      } finally {
+        setLoading(false)
+        setSaving(false);
+      }
+    };
+    getTenantDetails()
+  }, [])
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -130,58 +146,62 @@ useEffect(()=>{
                 </p>
               </div>
               <div className="card-body">
-                <article className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="username" className="form-label"> first name </label>
-                      <input type="text" id="first_name" name="first_name" value={profileForm.first_name} onChange={(e) => handleProfileChange(e)} className="form-input" required />
-                    </div>
-                    <div>
-                      <label htmlFor="last_name" className="form-label"> last name </label>
-                      <input type="text" id="last_name" name="last_name" value={profileForm.last_name} onChange={(e) => handleProfileChange(e)} className="form-input" required />
-                    </div>
-                    <div>
-                      <label htmlFor="business_email" className="form-label"> Business Email </label>
-                      <input type="email" id="business_email" name="business_email" value={profileForm.business_email} onChange={(e) => handleProfileChange(e)} className="form-input" required />
-                    </div>
+                {
+                  loading ? <LoadingSpinner /> :
+                    <article className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label htmlFor="username" className="form-label"> first name </label>
+                          <input type="text" id="first_name" name="first_name" value={profileForm.first_name} onChange={(e) => handleProfileChange(e)} className="form-input" required />
+                        </div>
+                        <div>
+                          <label htmlFor="last_name" className="form-label"> last name </label>
+                          <input type="text" id="last_name" name="last_name" value={profileForm.last_name} onChange={(e) => handleProfileChange(e)} className="form-input" required />
+                        </div>
+                        <div>
+                          <label htmlFor="business_email" className="form-label"> Business Email </label>
+                          <input type="email" id="business_email" name="business_email" value={profileForm.business_email} onChange={(e) => handleProfileChange(e)} className="form-input" required />
+                        </div>
 
-                    <div>
-                      <label htmlFor="business_name" className="form-label"> Business Name </label>
-                      <input type="text" id="business_name" name="business_name" value={profileForm.business_name} onChange={(e) => handleProfileChange(e)} className="form-input" />
-                    </div>
-                    <div>
-                      <label htmlFor="phone_number_code" className="form-label"> Phone Code </label>
-                      <input type="tel" id="phone_number_code" name="phone_number_code" value={profileForm.phone_number_code} onChange={(e) => handleProfileChange(e)} className="form-input" placeholder="+91" />
-                    </div>
-                    <div>
-                      <label htmlFor="phone_number" className="form-label"> Phone Number </label>
-                      <input type="tel" id="phone_number" name="phone_number" value={profileForm.phone_number} onChange={(e) => handleProfileChange(e)} className="form-input" placeholder="1234567890" />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="display_name" className="form-label"> Business Display Name </label>
-                    <input type="text" id="display_name" name="display_name" value={profileForm.display_name} onChange={(e) => handleProfileChange(e)} className="form-input" />
-                  </div>
-                  <div>
-                    <label htmlFor="website_url" className="form-label"> Website URL </label>
-                    <input type="text" id="website_url" name="website_url" value={profileForm.website_url} onChange={(e) => handleProfileChange(e)} className="form-input" />
-                  </div>
-                  <div className="flex justify-end">
-                    <button onClick={() => handleProfileSubmit()} disabled={saving} className="btn border bg-primary-500 text-white hover:bg-primary-800 flex items-center gap-2" >
-                      {saving ? (
-                        <>
-                          <LoadingSpinner size="sm" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4" />
-                          Save Changes
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </article>
+                        <div>
+                          <label htmlFor="business_name" className="form-label"> Business Name </label>
+                          <input type="text" id="business_name" name="business_name" value={profileForm.business_name} onChange={(e) => handleProfileChange(e)} className="form-input" />
+                        </div>
+                        <div>
+                          <label htmlFor="phone_number_code" className="form-label"> Phone Code </label>
+                          <input type="tel" id="phone_number_code" name="phone_number_code" value={profileForm.phone_number_code} onChange={(e) => handleProfileChange(e)} className="form-input" placeholder="+91" />
+                        </div>
+                        <div>
+                          <label htmlFor="phone_number" className="form-label"> Phone Number </label>
+                          <input type="tel" id="phone_number" name="phone_number" value={profileForm.phone_number} onChange={(e) => handleProfileChange(e)} className="form-input" placeholder="1234567890" />
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="display_name" className="form-label"> Business Display Name </label>
+                        <input type="text" id="display_name" name="display_name" value={profileForm.display_name} onChange={(e) => handleProfileChange(e)} className="form-input" />
+                      </div>
+                      <div>
+                        <label htmlFor="website_url" className="form-label"> Website URL </label>
+                        <input type="text" id="website_url" name="website_url" value={profileForm.website_url} onChange={(e) => handleProfileChange(e)} className="form-input" />
+                      </div>
+                      <div className="flex justify-end">
+                        <button onClick={() => handleProfileSubmit()} disabled={saving} className="btn border bg-primary-500 text-white hover:bg-primary-800 flex items-center gap-2" >
+                          {saving ? (
+                            <>
+                              <LoadingSpinner size="sm" />
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="w-4 h-4" />
+                              Save Changes
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </article>
+
+                }
               </div>
             </div>
           )}
@@ -201,7 +221,7 @@ useEffect(()=>{
                       Configure your WhatsApp Business account to use whatsapp
                     </p>
                   </div>
-                  <WhatsAppSignupPopup />
+                  <WhatsAppSignupPopup prefill={profileForm} />
                 </div>
               </div>
               {/* Setup guide */}

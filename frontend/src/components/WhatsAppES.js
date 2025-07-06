@@ -1,20 +1,35 @@
 import React, { useEffect } from "react";
 
-const WhatsAppSignupPopup = () => {
-    const extras = {
-  sessionInfoVersion: "3",
-  version: "v3",
-  prefill: {
-    business_name: "Pranav's Cafe",
-    business_email: "contact@pranavcafe.com",
-    phone_number: "9876543210",
-    phone_number_code: "+91",
-    first_name: "Pranav",
-    last_name: "Sharma",
-    display_name: "Pranav Cafe",
-    website_url: "https://pranavcafe.com",
-  },
-};
+const WhatsAppSignupPopup = ({prefill}) => {
+    const extras =  {
+      setup: {
+        business: {
+          name: prefill.business_name,
+          email: prefill.business_email,
+          website: prefill.website_url,
+          address: {
+            streetAddress1: prefill?.addressline1,
+            streetAddress2: prefill?.addressline2,
+            city: prefill?.city,
+            state: prefill?.state,
+            zipPostal: prefill?.pincode,
+            country: prefill?.country
+          },
+          phone: {
+            code: prefill.phone_number_code,
+            number: prefill.phone_number
+          },
+          timezone: prefill.timezone
+        },
+        phone: {
+          displayName: prefill.display_name,
+          category: prefill?.business_category,
+          description: prefill?.business_description
+        }
+      },
+      featureType: '',
+      sessionInfoVersion: '3',
+    };
 const encodedExtras = encodeURIComponent(JSON.stringify(extras));
 const signupUrl = `https://business.facebook.com/messaging/whatsapp/onboard/?app_id=1049671833273088&config_id=1022527426322275&extras=${encodedExtras}`;
 

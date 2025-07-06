@@ -16,8 +16,53 @@ type Tenant = {
     display_name: string,
     website_url: string,
 }
-export async function AllTenants(){
+export async function UpdateTenant(req:Request<{},{},Tenant>,res:Response){       
+    try {
+        const params: Tenant = {
+            id:req.body.id,
+            business_name: req.body.business_name,
+            business_email: isEmail(req.body.business_email),
+            phone_number: isPhoneNumber(req.body.phone_number),
+            phone_number_code: req.body.phone_number_code,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            display_name: req.body.display_name,
+            website_url: req.body.website_url,
+        };
 
+        const query: string = 'UPDATE tenants set business_name=?, business_email=?, phone_number=?, phone_number_code=?, first_name=?, last_name=?, display_name=?, website_url=? WHERE id=?';
+        
+        const [results] = await pool.query<ResultSetHeader>(query, [
+            params.business_name,
+            params.business_email,
+            params.phone_number,
+            params.phone_number_code,
+            params.first_name,
+            params.last_name,
+            params.display_name,
+            params.website_url,
+            params.id
+        ])
+        console.log(results);
+        
+        const response: SuccessResponse<{insertedId: number}> = {
+            success: true,
+            message: 'Tenant updated successfully',
+            data: null
+        }
+        res.status(200).json(response);
+    } catch (error: any) {
+        const status = error.statusCode || 500;
+        const message = error.message || 'Something went wrong. Please contact support';
+        console.log(error);
+        
+        const errorResponse: ErrorResponse = {
+            status: status,
+            message: message
+        };
+        
+        res.status(status).json(errorResponse);
+    }
 }
 export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
     const request = req.body;
@@ -69,18 +114,17 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
     }
 }
 
-export async function TenantbyID(req:Request,res:Response){
+export async function TenantbyID(req:Request,res:Response){    
     try {
-        const role_id = req.user.roleId;
+        const role_id = req.user.role_id;
         const tenant_id = req.user.tenant_id;
       const roleQuery = `SELECT id ,role_name FROM public.roles WHERE id=?`
       const [results] =  await pool.query<Role []>(roleQuery, [role_id]);
-      console.log('role',results);
       
       if (results[0].role_name=='admin'){
         const tenantquery = `SELECT * FROM tenants WHERE id=?`
         const [results] = await pool.query<ResultSetHeader>(tenantquery,[tenant_id])
-            const response: SuccessResponse = {
+            const response:  SuccessResponse = {
             success: true,
             message: null,
             data: results[0]
