@@ -131,7 +131,7 @@ export const loginUser = async (req, res) => {
     res.cookie('accessToken', token, {
       httpOnly: true,       // prevents access from JavaScript (XSS safe)
       secure: process.env.NODE_ENV === 'production', // send only over HTTPS in prod
-      sameSite: 'strict',   // optional, restricts cross-site requests
+      sameSite: 'none',   // optional, restricts cross-site requests
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     });
     res.json({
