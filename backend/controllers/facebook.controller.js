@@ -47,7 +47,11 @@ const REDIRECT_URI = "http://localhost:8080/api/facebook/callback";
 
 // 1. Receive redirect with ?code
 export async function FBCallback(req, res) {
+  console.log(req);
+  
   const code = req.query.code;
+  console.log(code);
+  
 
   if (!code) return res.status(400).send("Missing code");
 

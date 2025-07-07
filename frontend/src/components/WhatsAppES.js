@@ -31,7 +31,11 @@ const WhatsAppSignupPopup = ({prefill}) => {
       sessionInfoVersion: '3',
     };
 const encodedExtras = encodeURIComponent(JSON.stringify(extras));
-const signupUrl = `https://business.facebook.com/messaging/whatsapp/onboard/?app_id=1049671833273088&config_id=1022527426322275&extras=${encodedExtras}`;
+const signupUrl = `https://business.facebook.com/messaging/whatsapp/onboard/
+?app_id=1049671833273088
+&config_id=1022527426322275
+&extras=${encodedExtras}
+&redirect_uri=https://whatsappmessenger-server.onrender.com/api/facebook/callback`;
 
   // Listener for Meta's postMessage
   useEffect(() => {
