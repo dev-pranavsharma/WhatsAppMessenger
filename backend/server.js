@@ -16,6 +16,7 @@ const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT || 3001;
 
+app.set('trust proxy', 1);
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -37,8 +38,16 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://whats-app-messenger-steel.vercel.app'];
+
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
