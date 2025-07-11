@@ -45,6 +45,53 @@ const APP_ID = process.env.FACEBOOK_APP_ID;
 const APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 const REDIRECT_URI = "http://localhost:8080/api/facebook/callback";
 
+
+
+export async function FBCodeExchange(req, res) {
+  const { code } = req.body; // Received from frontend (React) after FB.login or postMessage
+  try {
+    const tokenResponse = await axios({
+      method: 'post',
+      url: 'https://graph.facebook.com/v23.0/oauth/access_token',
+      params: {
+        client_id: process.env.FACEBOOK_APP_ID,
+        client_secret: process.env.FACEBOOK_APP_SECRET,
+        code: code,
+        redirect_uri: 'http://localhost:8080/api/facebook/callback'
+      }
+    });
+    const { access_token, expires_in } = tokenResponse.data;
+    console.log('Access token from exchange-code:', access_token);
+
+    const accountResponse = await axios({
+      method: 'get',
+      url: 'https://graph.facebook.com/v23.0/me/businesses',
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+    const businessId = accountResponse.data.data[0]?.id;
+    let phone_number_id, waba_id;
+    if (businessId) {
+      const wabaResponse = await axios({
+        method: 'get',
+        url: `https://graph.facebook.com/v23.0/${businessId}/whatsapp_business_accounts`,
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      ({ phone_number_id, id: waba_id } = wabaResponse.data.data[0] || {});
+    }
+
+    if (phone_number_id && waba_id) {
+      clients.push({ phone_number_id, waba_id, access_token, expires_in, timestamp: new Date() });
+      console.log('Saved client:', { phone_number_id, waba_id });
+    }
+
+    res.json({ access_token, phone_number_id, waba_id });
+  } catch (error) {
+    res.status(500).json({ error: error.response?.data || error.message });
+  }
+};
+
+
+
 // 1. Receive redirect with ?code
 export async function FBCallback(req, res) {
   console.log(req);
@@ -106,10 +153,11 @@ export async function FBCallback(req, res) {
     // });
 
     // // 6. Redirect or send UI response
-    // res.redirect("http://localhost:3000/settings?status=connected");
+    // res.redirect("http://localhost:8080/settings?status=connected");
   } catch (err) {
     console.error(err?.response?.data || err);
     res.status(500).send("Error onboarding");
   }
 };
+
 

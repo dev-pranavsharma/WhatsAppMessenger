@@ -14,14 +14,5 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"> </script>
-    <script>
-      window.addEventListener('message', (event) => {
-  if (event.origin === 'https://business.facebook.com') {
-    console.log('Received data:', event.data);
-    // Process the WABA ID and Phone Number IDs here
-  }
-    });
-    </script>
   </body>
 </html>

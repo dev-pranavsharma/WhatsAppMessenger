@@ -3,6 +3,7 @@ import { Save, Key, User, Smartphone, AlertCircle, CheckCircle, ExternalLink } f
 import { tenantService, userService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import WhatsAppSignupPopup from '../components/WhatsAppES';
+import FBSignup from '../components/FBSignup';
 
 /**
  * Settings page component for user profile and WhatsApp configuration
@@ -183,6 +184,114 @@ const Settings = ({ user, onUserUpdate }) => {
                       <div>
                         <label htmlFor="website_url" className="form-label"> Website URL </label>
                         <input type="text" id="website_url" name="website_url" value={profileForm.website_url} onChange={(e) => handleProfileChange(e)} className="form-input" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className='select-wrapper'>
+                          <label htmlFor="country" className="form-label">Country</label>
+                          <select className="form-select" name="country" id="country">
+                            <option value="AF">Afghanistan</option>
+                            <option value="AL">Albania</option>
+                            <option value="DZ">Algeria</option>
+                            <option value="AR">Argentina</option>
+                            <option value="AU">Australia</option>
+                            <option value="BR">Brazil</option>
+                            <option value="CA">Canada</option>
+                            <option value="CN">China</option>
+                            <option value="EG">Egypt</option>
+                            <option value="FR">France</option>
+                            <option value="DE">Germany</option>
+                            <option value="IN" selected>India</option>
+                            <option value="ID">Indonesia</option>
+                            <option value="IT">Italy</option>
+                            <option value="JP">Japan</option>
+                            <option value="MX">Mexico</option>
+                            <option value="NG">Nigeria</option>
+                            <option value="PK">Pakistan</option>
+                            <option value="RU">Russia</option>
+                            <option value="ZA">South Africa</option>
+                            <option value="ES">Spain</option>
+                            <option value="GB">United Kingdom</option>
+                            <option value="US">United States</option>
+                          </select>
+                        </div>
+                        <div className='select-wrapper'>
+                          <label htmlFor="state" className="form-label">State</label>
+                          <select className="form-select" name="state" id="state">
+                            <option value="AN">Andaman and Nicobar Islands</option>
+                            <option value="AP">Andhra Pradesh</option>
+                            <option value="AR">Arunachal Pradesh</option>
+                            <option value="AS">Assam</option>
+                            <option value="BR">Bihar</option>
+                            <option value="CH">Chandigarh</option>
+                            <option value="CT">Chhattisgarh</option>
+                            <option value="DN">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="DL">Delhi</option>
+                            <option value="GA">Goa</option>
+                            <option value="GJ">Gujarat</option>
+                            <option value="HR">Haryana</option>
+                            <option value="HP">Himachal Pradesh</option>
+                            <option value="JK">Jammu and Kashmir</option>
+                            <option value="JH">Jharkhand</option>
+                            <option value="KA">Karnataka</option>
+                            <option value="KL">Kerala</option>
+                            <option value="LD">Lakshadweep</option>
+                            <option value="MP">Madhya Pradesh</option>
+                            <option value="MH">Maharashtra</option>
+                            <option value="MN">Manipur</option>
+                            <option value="ML">Meghalaya</option>
+                            <option value="MZ">Mizoram</option>
+                            <option value="NL">Nagaland</option>
+                            <option value="OR">Odisha</option>
+                            <option value="PY">Puducherry</option>
+                            <option value="PB">Punjab</option>
+                            <option value="RJ">Rajasthan</option>
+                            <option value="SK">Sikkim</option>
+                            <option value="TN">Tamil Nadu</option>
+                            <option value="TG">Telangana</option>
+                            <option value="TR">Tripura</option>
+                            <option value="UP" selected>Uttar Pradesh</option>
+                            <option value="UT">Uttarakhand</option>
+                            <option value="WB">West Bengal</option>
+                          </select>
+                        </div>
+                        <div className='select-wrapper'>
+                          <label htmlFor="business_category" className="form-label">Business Category</label>
+                          <select className="form-select" name="business_category" id="business_category">
+                            <option value="AUTOMOTIVE">Automotive</option>
+                            <option value="BEAUTY">Beauty, Spa & Salon</option>
+                            <option value="CLOTHING">Clothing & Apparel</option>
+                            <option value="EDUCATION">Education</option>
+                            <option value="ENTERTAINMENT">Entertainment</option>
+                            <option value="EVENT_PLANNING">Event Planning & Service</option>
+                            <option value="FINANCE">Finance & Banking</option>
+                            <option value="FOOD_BEVERAGE" selected>Food & Beverage</option>
+                            <option value="GROCERY">Grocery</option>
+                            <option value="HEALTH">Health & Wellness</option>
+                            <option value="HOME_IMPROVEMENT">Home Improvement</option>
+                            <option value="HOTEL">Hotel & Lodging</option>
+                            <option value="NON_PROFIT">Non-profit</option>
+                            <option value="PROFESSIONAL_SERVICES">Professional Services</option>
+                            <option value="RETAIL">Retail</option>
+                            <option value="TRAVEL">Travel & Transportation</option>
+                            <option value="OTHER">Other</option>
+                          </select>
+                        </div>
+                        <div className='select-wrapper'>
+                          <label htmlFor="timezone" className="form-label">Timezone</label>
+                          <select className="form-select" name="timezone" id="timezone">
+                            <option value="Africa/Abidjan">Africa/Abidjan (UTC+00:00)</option>
+                            <option value="Africa/Nairobi">Africa/Nairobi (UTC+03:00)</option>
+                            <option value="America/Los_Angeles">America/Los_Angeles (UTC-08:00)</option>
+                            <option value="America/New_York">America/New_York (UTC-05:00)</option>
+                            <option value="Asia/Dubai">Asia/Dubai (UTC+04:00)</option>
+                            <option value="Asia/Kolkata" selected>Asia/Kolkata (UTC+05:30)</option>
+                            <option value="Asia/Tokyo">Asia/Tokyo (UTC+09:00)</option>
+                            <option value="Australia/Sydney">Australia/Sydney (UTC+10:00)</option>
+                            <option value="Europe/London">Europe/London (UTC+00:00)</option>
+                            <option value="Europe/Paris">Europe/Paris (UTC+01:00)</option>
+                            <option value="Pacific/Auckland">Pacific/Auckland (UTC+12:00)</option>
+                          </select>
+                        </div>
                       </div>
                       <div className="flex justify-end">
                         <button onClick={() => handleProfileSubmit()} disabled={saving} className="btn border bg-primary-500 text-white hover:bg-primary-800 flex items-center gap-2" >
