@@ -75,7 +75,7 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
         config_id: '1022527426322275',
         response_type: 'code',
         override_default_response_type: true,
-        extras: extras
+        extras: encodedExtras
       }
     );
   };
@@ -184,8 +184,8 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
       <button onClick={launchSignup}
         disabled={isLoading}
         className={`px-6 py-3 font-medium rounded-lg transition ${isLoading
-            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            : 'btn btn-primary'
+          ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+          : 'btn btn-primary'
           }`}
       >
         {isLoading ? 'Setting up WhatsApp...' : 'Connect WhatsApp Business'}
