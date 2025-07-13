@@ -118,7 +118,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     window.FB.login(
       (response) => {
         console.log('📱 FB.login response:', response);
-        handleFBLogin()
+        handleFBLogin(response)
       },
       {
         config_id: '1022527426322275',
