@@ -64,7 +64,7 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
           fetch('https://whatsappmessenger-server.onrender.com/api/facebook/exchange', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, ...prefillData })          
+            body: JSON.stringify({ code, ...prefill })          
               })
           .then(res => res.json())
           .then(data => console.log('Token:', data))
