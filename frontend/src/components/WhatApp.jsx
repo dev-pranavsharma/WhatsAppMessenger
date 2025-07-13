@@ -118,7 +118,6 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     window.FB.login(
       (response) => {
         console.log('📱 FB.login response:', response);
-        handleFBLogin(response)
       },
       {
         config_id: '1022527426322275',
@@ -130,7 +129,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
   };
 
   useEffect(() => {
-    const handleMessage = (event) => {
+    const handleMessage = async(event) => {
       // Security check - accept messages from Facebook/Meta domains
       if (!event.origin.includes("facebook.com") && !event.origin.includes("meta.com")) {
         return;
@@ -151,7 +150,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
             return;
           }
         }
-
+        await handleFBLogin(data)
         // Log the raw response
         console.log("📋 Raw Meta response:", data);
 
