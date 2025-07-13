@@ -49,7 +49,8 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
       throw error;
     }
   };
-
+  console.log('prefill',prefill);
+  
   const launchSignup = () => {
     setIsLoading(true);
     setError('');
