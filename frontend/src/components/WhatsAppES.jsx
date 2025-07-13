@@ -75,7 +75,7 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
         config_id: '1022527426322275',
         response_type: 'code',
         override_default_response_type: true,
-        extras: encodedExtras
+        extras: extras
       }
     );
   };
