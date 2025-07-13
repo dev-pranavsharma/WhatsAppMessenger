@@ -215,7 +215,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
 
     // Cleanup
     return () => window.removeEventListener("message", handleMessage);
-  }, [onAccountCreated]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center mt-8 space-y-4">
