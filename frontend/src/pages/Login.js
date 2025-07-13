@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MessageSquare, Eye, EyeOff } from 'lucide-react';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -144,7 +145,7 @@ const handleSubmit = async (e) => {
             </div>
 
             {/* Additional fields for registration */}
-            {isRegister && (
+            {/* {isRegister && (
               <>
                 <div>
                   <label htmlFor="email" className="form-label">
@@ -178,7 +179,7 @@ const handleSubmit = async (e) => {
                   />
                 </div>
               </>
-            )}
+            )} */}
           </div>
 
           {/* Error Message */}
@@ -206,7 +207,8 @@ const handleSubmit = async (e) => {
 
           {/* Toggle between login and register */}
           <div className="text-center">
-            <button
+            <Link to='/company/profile'>Don't have an account? Create one</Link>
+            {/* <button
               type="button"
               onClick={toggleMode}
               className="text-primary-600 hover:text-primary-700 font-medium text-sm"
@@ -216,7 +218,7 @@ const handleSubmit = async (e) => {
                 ? 'Already have an account? Sign in' 
                 : "Don't have an account? Create one"
               }
-            </button>
+            </button> */}
           </div>
         </form>
 

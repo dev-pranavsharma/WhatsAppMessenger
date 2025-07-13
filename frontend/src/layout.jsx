@@ -1,24 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { userService } from './services/api';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Campaigns from './pages/Campaigns';
-import Templates from './pages/Templates';
-import Contacts from './pages/Contacts';
-import Analytics from './pages/Analytics';
-import Settings from './pages/Settings';
+import React, { useEffect, useState } from 'react'
+import { Outlet } from 'react-router-dom'
+import LoadingSpinner from './components/LoadingSpinner';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import LoadingSpinner from './components/LoadingSpinner';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
+import { userService } from './services/api';
+import Login from './pages/Login';
 
-/**
- * Main application component with routing and authentication
- * Manages user state and provides authenticated routes
- */
-function App() {
+const Layout = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -29,10 +17,6 @@ function App() {
   useEffect(() => {
     checkAuthStatus();
   }, []);
-
-  /**
-   * Verify current user authentication status
-   */
   const checkAuthStatus = async () => {
     try {
       const userData = await userService.getCurrentUser();
@@ -45,10 +29,6 @@ function App() {
     }
   };
 
-  /**
-   * Handle user login
-   * @param {Object} credentials - User login credentials
-   */
   const handleLogin = async (credentials) => {
     try {
       const userData = await userService.login(credentials);
@@ -67,9 +47,6 @@ function App() {
       return { success: false, error: error.message };
     }
   }
-  /**
-   * Handle user logout
-   */
   const handleLogout = async () => {
     try {
       await userService.logout();
@@ -79,16 +56,10 @@ function App() {
       // Force logout on client side even if server request fails
       setUser(null);
     }
-  };
-
-  /**
-   * Toggle sidebar visibility
-   */
+  }
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-  };
-
-  // Show loading spinner while checking auth status
+  }
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -96,15 +67,10 @@ function App() {
       </div>
     );
   }
-
-  // Show login page if user is not authenticated
   if (!user) {
     return <Login onRegister={handleRegister} onLogin={handleLogin} />;
   }
-
-  // Main authenticated application layout
   return (
-    <Router>
       <div className="min-h-screen bg-gray-50 flex">
         {/* Sidebar */}
         <Sidebar 
@@ -124,26 +90,12 @@ function App() {
             onToggleSidebar={toggleSidebar}
             sidebarOpen={sidebarOpen}
           />
-          
-          {/* Page content */}
           <main className="flex-1 p-6">
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard user={user} />} />
-              <Route path="/campaigns" element={<Campaigns user={user} />} />
-              <Route path="/templates" element={<Templates user={user} />} />
-              <Route path="/contacts" element={<Contacts user={user} />} />
-              <Route path="/analytics" element={<Analytics user={user} />} />
-              <Route path='/privacy_policy' element={<PrivacyPolicy/>}/>
-              <Route path='/terms_and_conditions' element={<TermsOfService/>}/>
-              <Route path="/settings" element={<Settings user={user} onUserUpdate={setUser} />} />
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
+          <Outlet/>
           </main>
         </div>
       </div>
-    </Router>
-  );
+  )
 }
 
-export default App;
+export default Layout

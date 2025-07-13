@@ -35,7 +35,6 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
   };
 
   const encodedExtras = encodeURIComponent(JSON.stringify(extras));
-  const signupUrl = `https://business.facebook.com/messaging/whatsapp/onboard/?app_id=1049671833273088&config_id=1022527426322275&extras=${encodedExtras}`;
 
 
     useEffect(() => {
@@ -65,8 +64,8 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
           fetch('https://whatsappmessenger-server.onrender.com/api/facebook/exchange', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code })
-          })
+            body: JSON.stringify({ code, ...prefillData })          
+              })
           .then(res => res.json())
           .then(data => console.log('Token:', data))
           .catch(err => console.error('Error:', err));
@@ -153,12 +152,6 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
 
           setClientData(extractedClientData);
           setIsLoading(false);
-
-          // Call the callback function if provided
-          if (onAccountCreated) {
-            onAccountCreated(extractedClientData);
-          }
-
           // Store in state or send to your backend
           console.log("📊 Extracted Client Data:", extractedClientData);
           
@@ -193,24 +186,11 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
         className={`px-6 py-3 font-medium rounded-lg transition ${
           isLoading 
             ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-            : 'bg-green-600 text-white hover:bg-green-700'
+            : 'btn btn-primary'
         }`}
       >
         {isLoading ? 'Setting up WhatsApp...' : 'Connect WhatsApp Business'}
       </button>
-
-      {clientData && (
-        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg max-w-md">
-          <h3 className="font-semibold text-green-800 mb-2">✅ Account Created Successfully!</h3>
-          <div className="text-sm text-green-700 space-y-1">
-            <p><strong>WABA ID:</strong> {clientData.wabaId}</p>
-            <p><strong>Phone Number ID:</strong> {clientData.phoneNumberId}</p>
-            <p><strong>Business ID:</strong> {clientData.businessId}</p>
-            <p><strong>Phone Number:</strong> {clientData.displayPhoneNumber}</p>
-            <p><strong>Status:</strong> {clientData.accountReviewStatus}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

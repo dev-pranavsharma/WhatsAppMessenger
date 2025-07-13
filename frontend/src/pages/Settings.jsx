@@ -3,14 +3,7 @@ import { Save, Key, User, Smartphone, AlertCircle, CheckCircle, ExternalLink } f
 import { tenantService, userService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import WhatsAppSignupPopup from '../components/WhatsAppES';
-import FBSignup from '../components/FBSignup';
 
-/**
- * Settings page component for user profile and WhatsApp configuration
- * @param {Object} props - Component props
- * @param {Object} props.user - Current user data
- * @param {Function} props.onUserUpdate - Function to update user state
- */
 const Settings = ({ user, onUserUpdate }) => {
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
@@ -29,6 +22,11 @@ const Settings = ({ user, onUserUpdate }) => {
     last_name: "",
     display_name: "",
     website_url: "",
+    country:"",
+    state:"",
+    business_category:"",
+    timezone:""
+
   })
 
 
@@ -67,15 +65,13 @@ const Settings = ({ user, onUserUpdate }) => {
     { id: 'whatsapp', name: 'WhatsApp', icon: Smartphone },
     { id: 'api', name: 'API Keys', icon: Key }
   ];
-  console.log(profileForm);
+  console.log(profileForm)
 
   useEffect(() => {
     const getTenantDetails = async () => {
       try {
         setLoading(true)
         const res = await tenantService.tenantById();
-        console.log(res);
-
         setProfileForm(res.data);
       } catch (err) {
         setLoading(false)
@@ -87,6 +83,7 @@ const Settings = ({ user, onUserUpdate }) => {
     };
     getTenantDetails()
   }, [])
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -188,7 +185,7 @@ const Settings = ({ user, onUserUpdate }) => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className='select-wrapper'>
                           <label htmlFor="country" className="form-label">Country</label>
-                          <select className="form-select" name="country" id="country">
+                          <select value={profileForm.country} className="form-select" name="country" id="country">
                             <option value="AF">Afghanistan</option>
                             <option value="AL">Albania</option>
                             <option value="DZ">Algeria</option>
@@ -216,7 +213,7 @@ const Settings = ({ user, onUserUpdate }) => {
                         </div>
                         <div className='select-wrapper'>
                           <label htmlFor="state" className="form-label">State</label>
-                          <select className="form-select" name="state" id="state">
+                          <select value={profileForm.state} className="form-select" name="state" id="state">
                             <option value="AN">Andaman and Nicobar Islands</option>
                             <option value="AP">Andhra Pradesh</option>
                             <option value="AR">Arunachal Pradesh</option>
@@ -256,7 +253,7 @@ const Settings = ({ user, onUserUpdate }) => {
                         </div>
                         <div className='select-wrapper'>
                           <label htmlFor="business_category" className="form-label">Business Category</label>
-                          <select className="form-select" name="business_category" id="business_category">
+                          <select value={profileForm.business_category} className="form-select" name="business_category" id="business_category">
                             <option value="AUTOMOTIVE">Automotive</option>
                             <option value="BEAUTY">Beauty, Spa & Salon</option>
                             <option value="CLOTHING">Clothing & Apparel</option>
@@ -278,7 +275,7 @@ const Settings = ({ user, onUserUpdate }) => {
                         </div>
                         <div className='select-wrapper'>
                           <label htmlFor="timezone" className="form-label">Timezone</label>
-                          <select className="form-select" name="timezone" id="timezone">
+                          <select value={profileForm.timezone} className="form-select" name="timezone" id="timezone">
                             <option value="Africa/Abidjan">Africa/Abidjan (UTC+00:00)</option>
                             <option value="Africa/Nairobi">Africa/Nairobi (UTC+03:00)</option>
                             <option value="America/Los_Angeles">America/Los_Angeles (UTC-08:00)</option>

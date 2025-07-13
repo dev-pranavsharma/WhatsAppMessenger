@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, Search, LogOut, User, Menu } from 'lucide-react';
 
-/**
- * Top header component with user actions and notifications
- * @param {Object} props - Component props
- * @param {Object} props.user - Current user data
- * @param {Function} props.onLogout - Logout handler function
- * @param {Function} props.onToggleSidebar - Sidebar toggle function
- * @param {boolean} props.sidebarOpen - Sidebar state
- */
 const Header = ({ user, onLogout, onToggleSidebar, sidebarOpen }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
