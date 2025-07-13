@@ -281,7 +281,7 @@ const CompanyForm = () => {
                             </div>
                         </div>
                         <div className="flex justify-center">
-                            <WhatsAppSignupPopup prefill={profxileForm}/>
+                            <WhatsAppSignupPopup prefill={profileForm}/>
                             {/* <button onClick={() => handleProfileSubmit()} disabled={saving} className="btn btn-primary flex items-center gap-2 w-full" >
                                 {saving ? (
                                     <>

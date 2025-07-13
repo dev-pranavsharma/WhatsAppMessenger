@@ -37,8 +37,8 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
   const encodedExtras = encodeURIComponent(JSON.stringify(extras));
 
 
-    useEffect(() => {
-    window.fbAsyncInit = function() {
+  useEffect(() => {
+    window.fbAsyncInit = function () {
       window.FB.init({
         appId: '1049671833273088',
         autoLogAppEvents: true,
@@ -47,7 +47,7 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
       });
     };
 
-    (function(d, s, id) {
+    (function (d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) return;
       js = d.createElement(s); js.id = id;
@@ -64,18 +64,18 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
           fetch('https://whatsappmessenger-server.onrender.com/api/facebook/exchange', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, ...prefill })          
-              })
-          .then(res => res.json())
-          .then(data => console.log('Token:', data))
-          .catch(err => console.error('Error:', err));
+            body: JSON.stringify({ code, ...prefill })
+          })
+            .then(res => res.json())
+            .then(data => console.log('Token:', data))
+            .catch(err => console.error('Error:', err));
         }
       },
       {
         config_id: '1022527426322275',
         response_type: 'code',
         override_default_response_type: true,
-        extras: { version: 'v3' }
+        extras: extras
       }
     );
   };
@@ -92,7 +92,7 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
 
       try {
         let data = event.data;
-        
+
         // Handle both string and object responses
         if (typeof data === 'string') {
           try {
@@ -102,10 +102,10 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
             return;
           }
         }
-        
+
         // Log the raw response first to see the actual structure
         console.log("📋 Raw Meta response:", data);
-        
+
         // Check for different types of success responses
         const isSuccess = (
           data.type === 'WA_EMBEDDED_SIGNUP' ||
@@ -114,37 +114,37 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
           data.type === 'EMBEDDED_SIGNUP' ||
           (data.data && (data.data.waba_id || data.data.phone_number_id))
         );
-        
+
         if (isSuccess) {
           // Extract client data with multiple fallback options
           const extractedClientData = {
             // WhatsApp Business Account ID
             wabaId: data.data?.waba_id || data.waba_id || data.business_id || data.data?.business_id,
-            
+
             // Phone number ID (for sending messages)
             phoneNumberId: data.data?.phone_number_id || data.phone_number_id,
-            
+
             // Business verification status
             businessVerificationStatus: data.data?.business_verification_status || data.verification_status,
-            
+
             // Access token (temporary - should be exchanged for permanent token)
             accessToken: data.data?.access_token || data.access_token,
-            
+
             // Phone number details
             phoneNumber: data.data?.phone_number || data.phone_number,
             displayPhoneNumber: data.data?.display_phone_number || data.display_phone_number,
-            
+
             // Business details
             businessId: data.data?.business_id || data.business_id,
             businessName: data.data?.business_name || data.business_name,
-            
+
             // Account status
             accountReviewStatus: data.data?.account_review_status || data.account_review_status,
-            
+
             // Additional fields that might be present
             appId: data.app_id || data.data?.app_id,
             configId: data.config_id || data.data?.config_id,
-            
+
             // Full response for debugging
             fullResponse: data,
             timestamp: new Date().toISOString()
@@ -154,14 +154,14 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
           setIsLoading(false);
           // Store in state or send to your backend
           console.log("📊 Extracted Client Data:", extractedClientData);
-          
+
           // Send to backend (currently just logs)
           sendToBackend(extractedClientData);
-          
+
           alert("✅ WhatsApp setup completed! Check console for client data.");
         } else {
           console.log("📝 Meta response received but not a success event:", data);
-          
+
           // Check if it's an error or other event type
           if (data.error) {
             console.error("❌ Meta signup error:", data.error);
@@ -175,7 +175,7 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
 
     // Listen for messages from the popup
     window.addEventListener("message", handleMessage);
-    
+
     // Cleanup
     return () => window.removeEventListener("message", handleMessage);
   }, [onAccountCreated]);
@@ -183,11 +183,10 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
     <div className="flex flex-col items-center mt-8 space-y-4">
       <button onClick={launchSignup}
         disabled={isLoading}
-        className={`px-6 py-3 font-medium rounded-lg transition ${
-          isLoading 
-            ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
+        className={`px-6 py-3 font-medium rounded-lg transition ${isLoading
+            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
             : 'btn btn-primary'
-        }`}
+          }`}
       >
         {isLoading ? 'Setting up WhatsApp...' : 'Connect WhatsApp Business'}
       </button>
