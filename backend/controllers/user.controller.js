@@ -58,7 +58,7 @@ export const updateUserProfile = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password, business_name } = req.body;
+    const {first_name,last_name, username, email, password } = req.body;
 
     // Validate required fields
     if (!username || !email || !password) {
@@ -76,9 +76,9 @@ export const registerUser = async (req, res) => {
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     // Insert new user
-    const insertQuery = ` INSERT INTO users (username, email, password, business_name) VALUES (?, ?, ?, ?) `;
+    const insertQuery = ` INSERT INTO users (first_name, last_name, username, email, password, business_name) VALUES (?, ?, ?, ?, ?, ?) `;
 
-    const result = await executeQuery(insertQuery, [username, email, hashedPassword, business_name ?? null]);
+    const result = await executeQuery(insertQuery, [first_name,last_name,username, email, hashedPassword, business_name ?? null]);
     // save token
     const token = jwt.sign({ user_id: result.insertId, username: username, password: hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
     const save_token = await executeQuery(`UPDATE users SET refresh_token = ? WHERE id = ?`, [token, result.insertId])

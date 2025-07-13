@@ -1,5 +1,6 @@
 import pool from '@/config/database';
 import axios from 'axios';
+import { registerUser } from './user.controller';
 
 // async function FBCallback(req, res){
 //   console.log(req.query)
@@ -43,7 +44,6 @@ import axios from 'axios';
 
 
 const REDIRECT_URI = "https://whatsappmessenger-server.onrender.com/api/facebook/exchange";
-
 
 export async function FBCodeExchange(req, res) {
     const {
@@ -100,13 +100,14 @@ export async function FBCodeExchange(req, res) {
       ` INSERT INTO tenants ( business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url, country, state, business_category, timezone, waba_id, phone_number_id, access_token, token_expires_in ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) `, 
       [ business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url, country, state, business_category, timezone, waba_id, phone_number_id, access_token, expires_in ]
     );
+    console.log({ access_token, phone_number_id, waba_id });
     console.log(`✅ New tenant inserted with ID: ${result.insertId}`);
+    const [user_result] = await registerUser(req,res)
   } catch (err) {
     console.error('❌ Error inserting new tenant into DB:', err);
   }
     }
 
-    res.json({ access_token, phone_number_id, waba_id });
   } catch (error) {
     res.status(500).json({ error: error.response?.data || error.message });
   }
