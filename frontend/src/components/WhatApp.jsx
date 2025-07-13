@@ -49,8 +49,35 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
       throw error;
     }
   };
-  console.log('prefill',prefill);
-  
+  console.log('prefill', prefill);
+  const handleFBLogin = async (response) => {
+    console.log('📱 FB.login response:', response);
+
+    if (response.authResponse) {
+      const code = response.authResponse.code;
+
+      try {
+        const backendResponse = await sendToBackend({
+          code,
+          ...prefill
+        });
+
+        setClientData(backendResponse.data);
+        alert("✅ WhatsApp Business Account connected successfully!");
+      } catch (error) {
+        console.error('❌ Backend error:', error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      console.log('❌ User cancelled login or did not fully authorize.');
+      setError('Login was cancelled or not authorized');
+      setIsLoading(false);
+    }
+  };
+
+
   const launchSignup = () => {
     setIsLoading(true);
     setError('');
@@ -89,34 +116,9 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     console.log('🚀 Launching WhatsApp signup with extras:', extras);
 
     window.FB.login(
-      async (response) => {
+      (response) => {
         console.log('📱 FB.login response:', response);
-
-        if (response.authResponse) {
-          const code = response.authResponse.code;
-
-          try {
-            // Send the code and prefill data to backend
-            const backendResponse = await sendToBackend({
-              code,
-              ...prefill
-            });
-
-            setClientData(backendResponse.data);
-            setIsLoading(false);
-
-            alert("✅ WhatsApp Business Account connected successfully!");
-
-          } catch (error) {
-            console.error('❌ Backend error:', error);
-            setError(error.message);
-            setIsLoading(false);
-          }
-        } else {
-          console.log('❌ User cancelled login or did not fully authorize.');
-          setError('Login was cancelled or not authorized');
-          setIsLoading(false);
-        }
+        handleFBLogin()
       },
       {
         config_id: '1022527426322275',
@@ -224,8 +226,8 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         onClick={launchSignup}
         disabled={isLoading}
         className={`px-6 py-3 font-medium rounded-lg transition ${isLoading
-            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            : 'btn btn-primary'
+          ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+          : 'btn btn-primary'
           }`}
       >
         {isLoading ? 'Setting up WhatsApp...' : 'Connect WhatsApp Business'}
