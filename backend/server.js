@@ -38,7 +38,7 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://whats-app-messenger-steel.vercel.app'];
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://whats-app-messenger-steel.vercel.app','https://www.impretio.com'];
 
 app.use(cors({
   origin: function (origin, callback) {
