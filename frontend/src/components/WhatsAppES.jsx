@@ -34,8 +34,8 @@ const WhatsAppSignupPopup = ({ prefill = {}, onAccountCreated }) => {
     sessionInfoVersion: '3',
   };
 
-  const encodedExtras = encodeURIComponent(JSON.stringify(extras));
-
+  console.log(extras);
+  
 
   useEffect(() => {
     window.fbAsyncInit = function () {

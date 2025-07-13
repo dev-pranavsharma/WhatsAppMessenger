@@ -4,7 +4,8 @@ import { AlertCircle, CheckCircle, Eye, EyeOff, Save } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import styles from './company.module.css'
 import Stepper from "../components/Stepper";
-import WhatsAppSignupPopup from "../components/WhatsAppES";
+import WhatsAppSignupPopup from "../components/WhatApp";
+// import WhatsAppSignupPopup from "../components/WhatsAppES";
 
 const CompanyForm = () => {
     const [loading, setLoading] = useState(false);
