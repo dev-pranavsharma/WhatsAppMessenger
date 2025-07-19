@@ -100,7 +100,8 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         config_id: '1022527426322275',
         response_type: 'code',
         override_default_response_type: true,
-        extras: JSON.stringify(extras)
+        extras: JSON.stringify(extras),
+        redirect_uri: 'https://whatsappmessenger-server.onrender.com/api/facebook/exchange'
       }
     );
   };
