@@ -143,13 +143,13 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         if (isSuccess) {
           // Extract client data
           const extractedClientData = {
-            wabaId: data.data?.waba_id || data.waba_id || data.business_id || data.data?.business_id,
-            phoneNumberId: data.data?.phone_number_id || data.phone_number_id,
+            waba_id: data.data?.waba_id || data.waba_id || data.business_id || data.data?.business_id,
+            phone_number_id: data.data?.phone_number_id || data.phone_number_id,
             businessVerificationStatus: data.data?.business_verification_status || data.verification_status,
             accessToken: data.data?.access_token || data.access_token,
             phoneNumber: data.data?.phone_number || data.phone_number,
             displayPhoneNumber: data.data?.display_phone_number || data.display_phone_number,
-            businessId: data.data?.business_id || data.business_id,
+            business_id: data.data?.business_id || data.business_id,
             businessName: data.data?.business_name || data.business_name,
             accountReviewStatus: data.data?.account_review_status || data.account_review_status,
             appId: data.app_id || data.data?.app_id,
@@ -157,22 +157,8 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
             fullResponse: data,
             timestamp: new Date().toISOString()
           };
-
+          setClientData(extractedClientData)
           console.log("📊 Extracted Client Data:", extractedClientData);
-
-          //   // Send to backend through postMessage data
-          //   sendToBackend(extractedClientData)
-          //     .then((result) => {
-          //       setClientData(result.data);
-          //       setIsLoading(false);
-          //       alert("✅ WhatsApp setup completed successfully!");
-          //     })
-          //     .catch((error) => {
-          //       console.error('❌ Error processing signup:', error);
-          //       setError(error.message);
-          //       setIsLoading(false);
-          //     });
-
         } else {
           console.log("📝 Meta response received but not a success event:", data);
 
@@ -198,8 +184,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
 
   useEffect(() => {
     const handleFBLogin = async () => {
-
-      if (code) {
+      if (code&&clientData) {
         try {
           const backendResponse = await sendToBackend({
             code,
@@ -223,7 +208,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
 
     handleFBLogin()
 
-  }, [code])
+  }, [code,clientData])
 
   return (
     <div className="flex flex-col items-center mt-8 space-y-4">

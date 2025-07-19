@@ -10,6 +10,9 @@ const clients = [];
 export async function FBCodeExchange(req, res) {
   
     const {
+    business_id,
+    waba_id,
+    phone_number_id,
     code,
     business_name,
     business_email,
@@ -24,6 +27,7 @@ export async function FBCodeExchange(req, res) {
     business_category,
     timezone
   } = req.body;
+  console.log('client details', business_id, waba_id, phone_number_id, code)
   try {
     const tokenResponse = await axios({
       method: 'post',
@@ -38,34 +42,28 @@ export async function FBCodeExchange(req, res) {
     const { access_token, expires_in } = tokenResponse.data;
     console.log('Access token from exchange-code:', access_token);
 
-    const accountResponse = await axios({
-      method: 'get',
-      url: 'https://graph.facebook.com/v23.0/me/businesses',
-      headers: { Authorization: `Bearer ${access_token}` }
-    });
-    const businessId = accountResponse.data.data[0]?.id;
-    let phone_number_id, waba_id;
-    if (businessId) {
-      const wabaResponse = await axios({
-        method: 'get',
-        url: `https://graph.facebook.com/v23.0/${businessId}/whatsapp_business_accounts`,
-        headers: { Authorization: `Bearer ${access_token}` }
-      });
-      ({ phone_number_id, id: waba_id } = wabaResponse.data.data[0] || {});
-    }
-
-    if (phone_number_id && waba_id) {
-      clients.push({ phone_number_id, waba_id, access_token, expires_in, timestamp: new Date() });
-      console.log('Saved client:', { phone_number_id, waba_id });
+    // const accountResponse = await axios({
+    //   method: 'get',
+    //   url: 'https://graph.facebook.com/v23.0/me/businesses',
+    //   headers: { Authorization: `Bearer ${access_token}` }
+    // });
+    // const businessId = accountResponse.data.data[0]?.id;
+    // let phone_number_id, waba_id;
+    // if (businessId) {
+    //   const wabaResponse = await axios({
+    //     method: 'get',
+    //     url: `https://graph.facebook.com/v23.0/${businessId}/whatsapp_business_accounts`,
+    //     headers: { Authorization: `Bearer ${access_token}` }
+    //   });
+    //   ({ phone_number_id, id: waba_id } = wabaResponse.data.data[0] || {});
+    // }
 
   try {
     const [result] = await pool.query(
       ` INSERT INTO tenants (business_id, business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url, country, state, business_category, timezone, waba_id, phone_number_id, access_token, token_expires_in ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) `, 
-      [businessId, business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url, country, state, business_category, timezone, waba_id, phone_number_id, access_token, expires_in ]
+      [business_id, business_name, business_email, phone_number, phone_number_code, first_name, last_name, display_name, website_url, country, state, business_category, timezone, waba_id, phone_number_id, access_token, expires_in ]
     )
-    
-    console.log({ access_token, phone_number_id, waba_id });
-    console.log(`✅ New tenant inserted with ID: ${result.insertId}`);
+        console.log(`✅ New tenant inserted with ID: ${result.insertId}`);
        const userReq = {
         ...req,
         body: {
@@ -93,15 +91,13 @@ export async function FBCodeExchange(req, res) {
           user_id: user_result.user_id,
           waba_id,
           phone_number_id,
-          business_id: businessId,
-          // access_token: access_token.substring(0, 10) + '...', // Truncated for security
+          business_id: business_id,
           expires_in
         }
       });
   } catch (err) {
     console.error('❌ Error inserting new tenant into DB:', err);
   }
-    }
 
   } catch (error) {
     res.status(500).json({ error: error.response?.data || error.message });
