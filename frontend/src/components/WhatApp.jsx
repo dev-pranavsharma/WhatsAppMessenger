@@ -101,7 +101,6 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         response_type: 'code',
         override_default_response_type: true,
         extras: JSON.stringify(extras),
-        redirect_uri: 'https://whatsappmessenger-server.onrender.com/api/facebook/exchange'
       }
     );
   };

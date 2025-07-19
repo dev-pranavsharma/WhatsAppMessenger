@@ -4,7 +4,7 @@ import { registerUser } from './user.controller';
 
 
 
-const REDIRECT_URI = "https://whatsappmessenger-server.onrender.com/api/facebook/exchange";
+const REDIRECT_URI = "https://www.impretio.com/login";
 const clients = [];
 
 export async function FBCodeExchange(req, res) {
