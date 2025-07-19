@@ -220,7 +220,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     }
   };
 
-  handleFBLogin(data)
+  handleFBLogin()
 
   },[code])
 
