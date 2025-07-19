@@ -101,7 +101,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         response_type: 'code',
         override_default_response_type: true,
         extras: JSON.stringify(extras),
-        redirect_uri: 'https://www.impretio.com/login'
+        redirect_uri: ''
       }
     )
   };
