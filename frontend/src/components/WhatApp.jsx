@@ -188,6 +188,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         try {
           const backendResponse = await sendToBackend({
             code,
+            ...clientData,
             ...prefill
           });
 
