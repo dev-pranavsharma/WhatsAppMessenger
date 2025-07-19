@@ -4,7 +4,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [clientData, setClientData] = useState(null);
   const [error, setError] = useState('');
-  const [code,setCode] = useState(null)
+  const [code, setCode] = useState(null)
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
@@ -92,16 +92,16 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     window.FB.login(
       (response) => {
         console.log('📱 FB.login response:', response);
-        if(response.authResponse){
-            setCode(response.authResponse.code)
+        if (response.authResponse) {
+          setCode(response.authResponse.code)
         }
       },
       {
-        config_id: '1022527426322275',
+        config_id: '709550595581391',
         response_type: 'code',
         override_default_response_type: true,
         extras: JSON.stringify(extras),
-        redirect_uri: ''
+        scope: 'business_management,whatsapp_business_management,ads_management',
       }
     )
   };
@@ -196,34 +196,34 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  useEffect(()=>{
-      const handleFBLogin = async () => {
+  useEffect(() => {
+    const handleFBLogin = async () => {
 
-    if (code) {
-      try {
-        const backendResponse = await sendToBackend({
-          code,
-          ...prefill
-        });
+      if (code) {
+        try {
+          const backendResponse = await sendToBackend({
+            code,
+            ...prefill
+          });
 
-        setClientData(backendResponse.data);
-        alert("✅ WhatsApp Business Account connected successfully!");
-      } catch (error) {
-        console.error('❌ Backend error:', error);
-        setError(error.message);
-      } finally {
+          setClientData(backendResponse.data);
+          alert("✅ WhatsApp Business Account connected successfully!");
+        } catch (error) {
+          console.error('❌ Backend error:', error);
+          setError(error.message);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        console.log('❌ User cancelled login or did not fully authorize.');
+        setError('Login was cancelled or not authorized');
         setIsLoading(false);
       }
-    } else {
-      console.log('❌ User cancelled login or did not fully authorize.');
-      setError('Login was cancelled or not authorized');
-      setIsLoading(false);
-    }
-  };
+    };
 
-  handleFBLogin()
+    handleFBLogin()
 
-  },[code])
+  }, [code])
 
   return (
     <div className="flex flex-col items-center mt-8 space-y-4">
