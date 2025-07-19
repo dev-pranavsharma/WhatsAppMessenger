@@ -4,7 +4,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [clientData, setClientData] = useState(null);
   const [error, setError] = useState('');
-
+  const [code,setCode] = useState(null)
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
@@ -50,32 +50,6 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     }
   };
   console.log('prefill', prefill);
-  const handleFBLogin = async (response) => {
-    console.log('📱 FB.login response:', response);
-
-    if (response.authResponse) {
-      const code = response.authResponse.code;
-
-      try {
-        const backendResponse = await sendToBackend({
-          code,
-          ...prefill
-        });
-
-        setClientData(backendResponse.data);
-        alert("✅ WhatsApp Business Account connected successfully!");
-      } catch (error) {
-        console.error('❌ Backend error:', error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      console.log('❌ User cancelled login or did not fully authorize.');
-      setError('Login was cancelled or not authorized');
-      setIsLoading(false);
-    }
-  };
 
 
   const launchSignup = () => {
@@ -118,6 +92,9 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     window.FB.login(
       (response) => {
         console.log('📱 FB.login response:', response);
+        if(response.authResponse){
+            setCode(response.authResponse.code)
+        }
       },
       {
         config_id: '1022527426322275',
@@ -129,7 +106,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
   };
 
   useEffect(() => {
-    const handleMessage = async(event) => {
+    const handleMessage = (event) => {
       // Security check - accept messages from Facebook/Meta domains
       if (!event.origin.includes("facebook.com") && !event.origin.includes("meta.com")) {
         return;
@@ -150,7 +127,6 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
             return;
           }
         }
-        await handleFBLogin(data)
         // Log the raw response
         console.log("📋 Raw Meta response:", data);
 
@@ -219,6 +195,35 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+  useEffect(()=>{
+      const handleFBLogin = async () => {
+
+    if (code) {
+      try {
+        const backendResponse = await sendToBackend({
+          code,
+          ...prefill
+        });
+
+        setClientData(backendResponse.data);
+        alert("✅ WhatsApp Business Account connected successfully!");
+      } catch (error) {
+        console.error('❌ Backend error:', error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      console.log('❌ User cancelled login or did not fully authorize.');
+      setError('Login was cancelled or not authorized');
+      setIsLoading(false);
+    }
+  };
+
+  handleFBLogin(data)
+
+  },[code])
+
   return (
     <div className="flex flex-col items-center mt-8 space-y-4">
       <button
@@ -231,7 +236,6 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
       >
         {isLoading ? 'Setting up WhatsApp...' : 'Connect WhatsApp Business'}
       </button>
-
       {error && (
         <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-800 text-sm">{error}</p>
