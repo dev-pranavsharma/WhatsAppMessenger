@@ -79,7 +79,7 @@ export async function FBCodeExchange(req, res) {
         json: (data) => data, // Mock response for user creation
         status: (code) => ({ json: (data) => data })
       };
-    const [user_result] = await registerUser(userReq,userRes)
+    const user_result = await registerUser(userReq,userRes)
        if (user_result.error) {
         throw new Error(user_result.error);
       }
