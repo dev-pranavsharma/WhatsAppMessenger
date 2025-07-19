@@ -32,7 +32,7 @@ export async function FBCodeExchange(req, res) {
         client_id: process.env.FACEBOOK_APP_ID,
         client_secret: process.env.FACEBOOK_APP_SECRET,
         code: code,
-        redirect_uri: REDIRECT_URI
+        redirect_uri: ''
       }
     });
     const { access_token, expires_in } = tokenResponse.data;
