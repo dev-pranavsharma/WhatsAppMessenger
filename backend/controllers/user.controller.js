@@ -59,9 +59,9 @@ export const updateUserProfile = async (req, res) => {
 export const registerUser = async (req, res) => {
   try {
     const {first_name,last_name, tenant_id, role_id, username, email, password } = req.body;
-
+    console.log(first_name,last_name, tenant_id, role_id, username, email, password );
     // Validate required fields
-    if (!username || !email || !password) {
+    if (!email || !password) {
       return res.status(400).json({ message: 'Username, email, and password are required' });
     }
 
@@ -87,6 +87,7 @@ export const registerUser = async (req, res) => {
     const newUser = await executeQuery(` SELECT id, username, email, business_name, is_verified, created_at FROM users WHERE id = ? `, [result.insertId]);
 
     res.status(201).json({
+      success:true,
       message: 'User registered successfully',
       user: newUser[0]
     });

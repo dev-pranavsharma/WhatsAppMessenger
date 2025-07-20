@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { setCookie } from "../utils/Cookies";
 
 const WhatsAppSignupPopup = ({ prefill = {} }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +42,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
 
       if (response.ok) {
         console.log('✅ Backend response:', result);
+        setCookie('tenant_id',result.data.tenant_id)
       } else {
         throw new Error(result.error || 'Failed to save data');
       }
@@ -101,7 +103,6 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         response_type: 'code',
         override_default_response_type: true,
         extras: JSON.stringify(extras),
-        scope: 'business_management,whatsapp_business_management,ads_management',
       }
     )
   };
@@ -143,7 +144,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         if (isSuccess) {
           // Extract client data
           const extractedClientData = {
-            waba_id: data.data?.waba_id || data.waba_id || data.business_id || data.data?.business_id,
+            waba_id: data.data?.waba_id || data.waba_id ,
             phone_number_id: data.data?.phone_number_id || data.phone_number_id,
             businessVerificationStatus: data.data?.business_verification_status || data.verification_status,
             accessToken: data.data?.access_token || data.access_token,
@@ -155,8 +156,7 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
             appId: data.app_id || data.data?.app_id,
             configId: data.config_id || data.data?.config_id,
             fullResponse: data,
-            timestamp: new Date().toISOString()
-          };
+          }
           setClientData(extractedClientData)
           console.log("📊 Extracted Client Data:", extractedClientData);
         } else {
@@ -184,15 +184,11 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
 
   useEffect(() => {
     const handleFBLogin = async () => {
-      if (code&&clientData) {
+      if (code!==null&&clientData!==null) {
+        console.log(code,clientData)
         try {
-          const backendResponse = await sendToBackend({
-            code,
-            ...clientData,
-            ...prefill
-          });
-
-          setClientData(backendResponse.data);
+          const data = {code,...clientData,...prefill}
+          await sendToBackend(data);
           alert("✅ WhatsApp Business Account connected successfully!");
         } catch (error) {
           console.error('❌ Backend error:', error);
@@ -200,47 +196,25 @@ const WhatsAppSignupPopup = ({ prefill = {} }) => {
         } finally {
           setIsLoading(false);
         }
-      } else {
-        console.log('❌ User cancelled login or did not fully authorize.');
-        setError('Login was cancelled or not authorized');
-        setIsLoading(false);
       }
-    };
+    }
 
     handleFBLogin()
 
   }, [code,clientData])
 
+  
   return (
-    <div className="flex flex-col items-center mt-8 space-y-4">
       <button
         onClick={launchSignup}
         disabled={isLoading}
-        className={`px-6 py-3 font-medium rounded-lg transition ${isLoading
+        className={`btn btn-primary ${isLoading
           ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
           : 'btn btn-primary'
           }`}
       >
         {isLoading ? 'Setting up WhatsApp...' : 'Connect WhatsApp Business'}
       </button>
-      {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">{error}</p>
-        </div>
-      )}
-
-      {clientData && (
-        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="font-semibold text-green-800">WhatsApp Connected Successfully!</h3>
-          <div className="text-sm text-green-600 mt-2">
-            <p>WABA ID: {clientData.waba_id}</p>
-            <p>Phone Number ID: {clientData.phone_number_id}</p>
-            <p>Tenant ID: {clientData.tenant_id}</p>
-            <p>User ID: {clientData.user_id}</p>
-          </div>
-        </div>
-      )}
-    </div>
   );
 };
 

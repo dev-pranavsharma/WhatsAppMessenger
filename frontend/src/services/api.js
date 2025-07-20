@@ -52,11 +52,6 @@ export const userService = {
     body: credentials,
   }),
 
-  register: (credentials) => apiRequest('/users/register', {
-    method: 'POST',
-    body: credentials
-  }),
-
   logout: () => apiRequest('/users/logout', {
     method: 'POST',
   }),
