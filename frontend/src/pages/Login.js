@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
  */
 const Login = ({ onLogin,onRegister }) => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -96,18 +96,18 @@ const handleSubmit = async (e) => {
           <div className="space-y-4">
             {/* Username Field */}
             <div>
-              <label htmlFor="username" className="form-label">
-                Username or Email
+              <label htmlFor="email" className="form-label">
+                Email
               </label>
               <input
-                id="username"
-                name="username"
+                id="email"
+                name="email"
                 type="text"
                 required
-                value={formData.username}
+                value={formData.email}
                 onChange={handleChange}
                 className="form-input"
-                placeholder="Enter your username or email"
+                placeholder="Enter your email"
                 disabled={loading}
               />
             </div>
@@ -142,44 +142,7 @@ const handleSubmit = async (e) => {
                   )}
                 </button>
               </div>
-            </div>
-
-            {/* Additional fields for registration */}
-            {/* {isRegister && (
-              <>
-                <div>
-                  <label htmlFor="email" className="form-label">
-                    Email Address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={formData.email || ''}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="Enter your email address"
-                    disabled={loading}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="business_name" className="form-label">
-                    Business Name (Optional)
-                  </label>
-                  <input
-                    id="business_name"
-                    name="business_name"
-                    type="text"
-                    value={formData.business_name || ''}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="Enter your business name"
-                    disabled={loading}
-                  />
-                </div>
-              </>
-            )} */}
+            </div>  
           </div>
 
           {/* Error Message */}
