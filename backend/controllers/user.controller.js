@@ -99,15 +99,15 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     // Validate required fields
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password are required' });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'email and password are required' });
     }
 
     // Find user by username or email
-    const userQuery = ` SELECT * FROM users WHERE username = ? OR email = ? `;
+    const userQuery = ` SELECT * FROM users WHERE email = ? `;
 
     const users = await executeQuery(userQuery, [username, username]);
 
@@ -128,7 +128,7 @@ export const loginUser = async (req, res) => {
     delete user.password;
     
     // Store user in session
-    const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, username: user.username, }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, email: user.email, }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.cookie('accessToken', token, {
       httpOnly: true,       // prevents access from JavaScript (XSS safe)
       secure: process.env.NODE_ENV === 'production', // send only over HTTPS in prod
