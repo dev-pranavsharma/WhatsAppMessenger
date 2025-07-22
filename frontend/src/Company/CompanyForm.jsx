@@ -266,7 +266,7 @@ const CompanyForm = () => {
             if(tenant_id){
                 try {
                     setLoading(true)
-                    const res = await userService.register()
+                    const res = await userService.register(payload)
                     console.log('register',res)
                     if(res.success){
                         alert('Registerd sucessfully!')

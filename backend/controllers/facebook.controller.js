@@ -21,6 +21,8 @@ export async function FBCodeExchange(req, res) {
     last_name,
     display_name,
     website_url,
+    address_line_1,
+    address_line_2,
     country,
     state,
     business_category,

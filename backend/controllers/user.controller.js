@@ -58,33 +58,33 @@ export const updateUserProfile = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const {first_name,last_name, tenant_id, role_id, username, email, password } = req.body;
-    console.log(first_name,last_name, tenant_id, role_id, username, email, password );
+    const {first_name,last_name, tenant_id, role_id, email, password } = req.body;
+    console.log(first_name,last_name, tenant_id, role_id, email, password );
     // Validate required fields
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Username, email, and password are required' });
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username, and password are required' });
     }
 
     // Check if user already exists
-    const existingUser = await executeQuery('SELECT id FROM users WHERE username = ? OR email = ?', [username, email]);
+    const existingUser = await executeQuery('SELECT id FROM users WHERE email = ?', [email]);
 
     if (existingUser.length > 0) {
-      return res.status(409).json({ message: 'Username or email already exists' });
+      return res.status(409).json({ message: 'email already exists' });
     }
 
     // Hash password
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     // Insert new user
-    const insertQuery = ` INSERT INTO users (first_name, last_name, tenant_id ,role_id, username, email, password) VALUES (?, ?, ?, ?, ?, ?, ?) `;
+    const insertQuery = ` INSERT INTO users (first_name, last_name, tenant_id ,role_id, email, password) VALUES (?, ?, ?, ?, ?, ?) `;
 
-    const result = await executeQuery(insertQuery, [first_name,last_name,tenant_id, role_id, username, email, hashedPassword]);
+    const result = await executeQuery(insertQuery, [first_name,last_name,tenant_id, role_id, email, hashedPassword]);
     // save token
-    const token = jwt.sign({ user_id: result.insertId, username: username, password: hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    const token = jwt.sign({ user_id: result.insertId, email: email, password: hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
     const save_token = await executeQuery(`UPDATE users SET refresh_token = ? WHERE id = ?`, [token, result.insertId])
 
     // Return user data (without password)
-    const newUser = await executeQuery(` SELECT id, username, email, business_name, is_verified, created_at FROM users WHERE id = ? `, [result.insertId]);
+    const newUser = await executeQuery(` SELECT id, email, first_name, last_name, created_at FROM users WHERE id = ? `, [result.insertId]);
 
     res.status(201).json({
       success:true,
