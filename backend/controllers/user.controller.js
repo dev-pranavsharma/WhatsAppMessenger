@@ -61,8 +61,8 @@ export const registerUser = async (req, res) => {
     const {first_name,last_name, tenant_id, role_id, email, password } = req.body;
     console.log(first_name,last_name, tenant_id, role_id, email, password );
     // Validate required fields
-    if (!username || !password) {
-      return res.status(400).json({ message: 'Username, and password are required' });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email, and password are required' });
     }
 
     // Check if user already exists

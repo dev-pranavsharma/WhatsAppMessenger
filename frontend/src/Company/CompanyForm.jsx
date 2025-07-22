@@ -302,7 +302,7 @@ const CompanyForm = () => {
                             </div>
                             <div>
                                 <label htmlFor="username" className="form-label"> Username or Email </label>
-                                <input id="username" name="username" type="text" required value={payload.username} onChange={(e) => handleProfileChange(e)} className="form-input" placeholder="Enter your username or email" disabled={loading} />
+                                <input id="email" name="email" type="text" required value={payload.email} onChange={(e) => handleProfileChange(e)} className="form-input" placeholder="Enter your username or email" disabled={loading} />
                             </div>
                             <div>
                                 <label htmlFor="password" className="form-label">
