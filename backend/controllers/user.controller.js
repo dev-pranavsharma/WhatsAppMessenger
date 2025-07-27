@@ -131,7 +131,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, email: user.email, }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.cookie('accessToken', token, {
       httpOnly: true,       // prevents access from JavaScript (XSS safe)
-      secure: process.env.NODE_ENV === 'production', // send only over HTTPS in prod
+      secure: true , // send only over HTTPS in prod
       sameSite: 'none',   // optional, restricts cross-site requests
       maxAge: 24 * 60 * 60 * 1000 // 1 day
     });

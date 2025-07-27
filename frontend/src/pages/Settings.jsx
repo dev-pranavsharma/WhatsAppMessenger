@@ -149,14 +149,6 @@ const Settings = ({ user, onUserUpdate }) => {
                     <article className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label htmlFor="username" className="form-label"> first name </label>
-                          <input type="text" id="first_name" name="first_name" value={profileForm.first_name} onChange={(e) => handleProfileChange(e)} className="form-input" required />
-                        </div>
-                        <div>
-                          <label htmlFor="last_name" className="form-label"> last name </label>
-                          <input type="text" id="last_name" name="last_name" value={profileForm.last_name} onChange={(e) => handleProfileChange(e)} className="form-input" required />
-                        </div>
-                        <div>
                           <label htmlFor="business_email" className="form-label"> Business Email </label>
                           <input type="email" id="business_email" name="business_email" value={profileForm.business_email} onChange={(e) => handleProfileChange(e)} className="form-input" required />
                         </div>
