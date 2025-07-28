@@ -58,8 +58,8 @@ export const updateUserProfile = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const {first_name,last_name, tenant_id, role_id, email, password } = req.body;
-    console.log(first_name,last_name, tenant_id, role_id, email, password );
+    const { first_name, last_name, tenant_id, role_id, email, password } = req.body;
+    console.log(first_name, last_name, tenant_id, role_id, email, password);
     // Validate required fields
     if (!email || !password) {
       return res.status(400).json({ message: 'Email, and password are required' });
@@ -78,7 +78,7 @@ export const registerUser = async (req, res) => {
     // Insert new user
     const insertQuery = ` INSERT INTO users (first_name, last_name, tenant_id ,role_id, email, password) VALUES (?, ?, ?, ?, ?, ?) `;
 
-    const result = await executeQuery(insertQuery, [first_name,last_name,tenant_id, role_id, email, hashedPassword]);
+    const result = await executeQuery(insertQuery, [first_name, last_name, tenant_id, role_id, email, hashedPassword]);
     // save token
     const token = jwt.sign({ user_id: result.insertId, email: email, password: hashedPassword }, process.env.JWT_SECRET, { expiresIn: '30d' });
     const save_token = await executeQuery(`UPDATE users SET refresh_token = ? WHERE id = ?`, [token, result.insertId])
@@ -87,7 +87,7 @@ export const registerUser = async (req, res) => {
     const newUser = await executeQuery(` SELECT id, email, first_name, last_name, created_at FROM users WHERE id = ? `, [result.insertId]);
 
     res.status(201).json({
-      success:true,
+      success: true,
       message: 'User registered successfully',
       user: newUser[0]
     });
@@ -126,14 +126,14 @@ export const loginUser = async (req, res) => {
 
     // Remove password from response
     delete user.password;
-    
+
     // Store user in session
     const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, email: user.email, }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.cookie('accessToken', token, {
-      httpOnly: true,       // prevents access from JavaScript (XSS safe)
-      secure: true , // send only over HTTPS in prod
-      sameSite: 'none',   // optional, restricts cross-site requests
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 24 * 60 * 60 * 1000
     });
     res.json({
       message: 'Login successful',
@@ -154,7 +154,8 @@ export const logoutUser = (req, res) => {
       return res.status(500).json({ message: 'Could not log out' });
     }
 
-    res.clearCookie('connect.sid');
+    res.clearCookie('accessToken');
+    res.clearCookie('user');
     res.json({ message: 'Logged out successfully' });
   });
 };

@@ -90,16 +90,16 @@ const Header = ({ user, onLogout, onToggleSidebar, sidebarOpen }) => {
             >
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                 <span className="text-primary-700 font-medium text-sm">
-                  {user?.username?.charAt(0).toUpperCase() || 'U'}
+                  {user?.first_name?.charAt(0).toUpperCase() || 'U'}
                 </span>
               </div>
               <div className="hidden md:block text-left">
                 <p className="font-medium text-gray-900 text-sm">
-                  {user?.business_name || user?.username || 'User'}
+                  {user?.first_name || user?.first_name || 'User'}{' '}{user?.last_name || user?.last_name || ''}
                 </p>
-                <p className="text-xs text-gray-500">
+                <small className="text-gray-500">
                   {user?.email}
-                </p>
+                </small>
               </div>
             </button>
 

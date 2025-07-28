@@ -1,26 +1,19 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  BarChart3, 
-  MessageSquare, 
-  Users, 
-  FileText, 
-  Settings, 
+import {
+  BarChart3,
+  MessageSquare,
+  Users,
+  FileText,
+  Settings,
   LayoutDashboard,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-
-/**
- * Sidebar navigation component
- * @param {Object} props - Component props
- * @param {boolean} props.isOpen - Sidebar open/closed state
- * @param {Function} props.onToggle - Toggle sidebar function
- * @param {Object} props.user - Current user data
- */
-const Sidebar = ({ isOpen, onToggle, user }) => {
+import { getCookie } from '../utils/Cookies';
+const Sidebar = ({ isOpen, onToggle }) => {
   const location = useLocation();
-
+  const user = JSON.parse(getCookie('user'))
   /**
    * Navigation menu items with icons and paths
    */
@@ -63,19 +56,15 @@ const Sidebar = ({ isOpen, onToggle, user }) => {
     }
   ];
 
-  /**
-   * Check if current path is active
-   * @param {string} path - Menu item path
-   * @returns {boolean} Is path active
-   */
+  console.log('user',user);
+  
   const isActivePath = (path) => {
     return location.pathname === path;
   };
 
   return (
-    <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-50 ${
-      isOpen ? 'w-64' : 'w-16'
-    }`}>
+    <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-50 ${isOpen ? 'w-64' : 'w-16'
+      }`}>
       {/* Sidebar header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         {isOpen && (
@@ -89,7 +78,7 @@ const Sidebar = ({ isOpen, onToggle, user }) => {
             </div>
           </div>
         )}
-        
+
         <button
           onClick={onToggle}
           className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
@@ -109,22 +98,12 @@ const Sidebar = ({ isOpen, onToggle, user }) => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
               <span className="text-primary-700 font-medium text-sm">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+                {user?.first_name?.charAt(0).toUpperCase() || 'U'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900 truncate">
-                {user?.business_name || user?.username || 'User'}
-              </p>
-              <p className="text-sm text-gray-500 truncate">
-                {user?.email}
-              </p>
-              {user?.is_verified && (
-                <div className="flex items-center gap-1 mt-1">
-                  <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-                  <span className="text-xs text-success-600">WhatsApp Connected</span>
-                </div>
-              )}
+              <p className="font-medium text-gray-900 truncate"> {user?.first_name} {user?.last_name} </p>
+              <p className="text-sm text-gray-500 truncate"> {user?.email} </p>
             </div>
           </div>
         </div>
@@ -136,22 +115,20 @@ const Sidebar = ({ isOpen, onToggle, user }) => {
           {navigationItems.map((item) => {
             const IconComponent = item.icon;
             const isActive = isActivePath(item.path);
-            
+
             return (
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group ${
-                    isActive
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group ${isActive
                       ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                    }`}
                   title={!isOpen ? item.name : ''}
                 >
-                  <IconComponent className={`w-5 h-5 ${
-                    isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'
-                  }`} />
-                  
+                  <IconComponent className={`w-5 h-5 ${isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'
+                    }`} />
+
                   {isOpen && (
                     <div className="flex-1">
                       <span className="font-medium">{item.name}</span>

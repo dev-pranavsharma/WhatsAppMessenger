@@ -15,71 +15,66 @@ import {
 import { campaignService, contactService, templateService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-/**
- * Dashboard page component showing overview and quick actions
- * @param {Object} props - Component props
- * @param {Object} props.user - Current user data
- */
-const Dashboard = ({ user }) => {
+const Dashboard = () => {
   const [stats, setStats] = useState({
     campaigns: { total: 0, active: 0, completed: 0 },
     contacts: { total: 0, opted_in: 0 },
     templates: { total: 0, approved: 0 }
   });
   const [recentCampaigns, setRecentCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const user = JSON.parse(getCookie('user'))
   /**
    * Load dashboard data on component mount
    */
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
+  // useEffect(() => {
+  //   loadDashboardData();
+  // }, []);
 
   /**
    * Fetch all dashboard data
    */
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
+  // const loadDashboardData = async () => {
+  //   try {
+  //     setLoading(true);
       
-      // Load dashboard statistics
-      const [campaigns, contacts, templates] = await Promise.all([
-        campaignService.getCampaigns(),
-        contactService.getStats(),
-        templateService.getTemplates()
-      ]);
+  //     // Load dashboard statistics
+  //     const [campaigns, contacts, templates] = await Promise.all([
+  //       campaignService.getCampaigns(),
+  //       contactService.getStats(),
+  //       templateService.getTemplates()
+  //     ]);
 
-      // Process campaign statistics
-      const campaignStats = {
-        total: campaigns.length,
-        active: campaigns.filter(c => c.status === 'RUNNING').length,
-        completed: campaigns.filter(c => c.status === 'COMPLETED').length
-      };
+  //     // Process campaign statistics
+  //     const campaignStats = {
+  //       total: campaigns.length,
+  //       active: campaigns.filter(c => c.status === 'RUNNING').length,
+  //       completed: campaigns.filter(c => c.status === 'COMPLETED').length
+  //     };
 
-      // Process template statistics
-      const templateStats = {
-        total: templates.length,
-        approved: templates.filter(t => t.status === 'APPROVED').length
-      };
+  //     // Process template statistics
+  //     const templateStats = {
+  //       total: templates.length,
+  //       approved: templates.filter(t => t.status === 'APPROVED').length
+  //     };
 
-      setStats({
-        campaigns: campaignStats,
-        contacts: contacts,
-        templates: templateStats
-      });
+  //     setStats({
+  //       campaigns: campaignStats,
+  //       contacts: contacts,
+  //       templates: templateStats
+  //     });
 
-      // Set recent campaigns (last 5)
-      setRecentCampaigns(campaigns.slice(0, 5));
+  //     // Set recent campaigns (last 5)
+  //     setRecentCampaigns(campaigns.slice(0, 5));
 
-    } catch (err) {
-      setError('Failed to load dashboard data');
-      console.error('Dashboard data loading error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   } catch (err) {
+  //     setError('Failed to load dashboard data');
+  //     console.error('Dashboard data loading error:', err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   /**
    * Get status badge for campaign
@@ -119,7 +114,7 @@ const Dashboard = ({ user }) => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {user?.business_name || user?.username}!
+            Welcome back, {user?.first_name || user?.last_name}!
           </h1>
           <p className="text-gray-600 mt-1">
             Here's an overview of your WhatsApp campaign performance
