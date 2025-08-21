@@ -1,4 +1,17 @@
 import jwt from 'jsonwebtoken'
+
+
+
+// Create Access Token
+export function generateAccessToken(user) {
+  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "30m" });
+}
+
+// Create Refresh Token
+export function generateRefreshToken(user) {
+  return jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+}
+
 export const authMiddleware = (req, res, next) => {
   const token = req.cookies.accessToken; // from cookie
 

@@ -1,6 +1,8 @@
+import { generateAccessToken } from '@/middleware/auth.js';
 import { executeQuery } from '../config/database.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { TenantbyID } from './tenants.controller.js';
 
 export const getUserProfile = async (req, res) => {
   try {
@@ -20,7 +22,6 @@ export const getUserProfile = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 export const updateUserProfile = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -55,7 +56,6 @@ export const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 export const registerUser = async (req, res) => {
   try {
     const { first_name, last_name, tenant_id, role_id, email, password } = req.body;
@@ -96,8 +96,9 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 export const loginUser = async (req, res) => {
+  console.log(req);
+  
   try {
     const { email, password } = req.body;
 
@@ -123,12 +124,13 @@ export const loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-
     // Remove password from response
     delete user.password;
+    delete user.created_at;
+    delete user.updated_at;
 
     // Store user in session
-    const token = jwt.sign({ user_id: user.id, role_id: user.role_id, tenant_id: user.tenant_id, email: user.email, }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    const token = generateAccessToken(user)
     res.cookie('accessToken', token, {
       httpOnly: true,
       secure: true,
@@ -145,22 +147,11 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
 export const logoutUser = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error destroying session:', err);
-      return res.status(500).json({ message: 'Could not log out' });
-    }
-
-    res.clearCookie('accessToken');
-    res.clearCookie('user');
-    res.json({ message: 'Logged out successfully' });
-  });
+  res.clearCookie('accessToken');
+  res.clearCookie('user');
+  res.json({ message: 'Logged out successfully' });
 };
-
-
 export const updateWhatsAppConfig = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -193,29 +184,51 @@ export const updateWhatsAppConfig = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 }
-
 export const getCurrentUser = async (req, res) => {
+  console.log(req.user);
+  
   try {
-    if (!req.user.user_id) {
+    if (!req.user.id) {
       return res.status(401).json({ message: 'Not authenticated' });
     }
 
     const query = `
-      SELECT id, username, email, whatsapp_business_id, phone_number, 
-             business_name, is_verified, created_at, updated_at
+      SELECT id, tenant_id, role_id, first_name,last_name,email, phone_number, is_verified
       FROM users 
-      WHERE id = ?
-    `;
+      WHERE id = ?`;
 
-    const users = await executeQuery(query, [req.user.user_id]);
+    const users = await executeQuery(query, [req.user.id]);
 
     if (users.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
+    console.log('------------------213:user------------------\n', users);
 
     res.json(users[0]);
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+}
+export const AuthUserToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).json({ message: "No refresh token provided" });
+
+    // check if refresh token exists in DB
+    const db = await mysql.createConnection({ /* your config */ });
+    const [rows] = await db.execute("SELECT * FROM refresh_tokens WHERE token = ?", [refreshToken]);
+    if (rows.length === 0) return res.status(403).json({ message: "Invalid refresh token" });
+
+    // verify refresh token
+    jwt.verify(refreshToken, REFRESH_SECRET, (err, user) => {
+      if (err) return res.status(403).json({ message: "Invalid or expired refresh token" });
+
+      // issue new access token
+      const newAccessToken = generateAccessToken(user);
+      return res.json({ accessToken: newAccessToken });
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 }

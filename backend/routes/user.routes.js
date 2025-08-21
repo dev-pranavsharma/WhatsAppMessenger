@@ -19,6 +19,8 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/logout', authMiddleware, logoutUser);
 router.get('/me', authMiddleware, getCurrentUser);
+// Refresh endpoint
+router.post("/auth/refresh");
 
 /**
  * User profile management routes

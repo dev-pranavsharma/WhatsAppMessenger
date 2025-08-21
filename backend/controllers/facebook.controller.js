@@ -32,7 +32,7 @@ export async function FBCodeExchange(req, res) {
   try {
     const tokenResponse = await axios({
       method: 'post',
-      url: 'https://graph.facebook.com/v23.0/oauth/access_token',
+      url: `${process.env.FACEBOOK_API_URL}/${FACEBOOK_API_VERSION}/oauth/access_token`,
       params: {
         client_id: process.env.FACEBOOK_APP_ID,
         client_secret: process.env.FACEBOOK_APP_SECRET,
@@ -42,22 +42,6 @@ export async function FBCodeExchange(req, res) {
     });
     const { access_token, expires_in } = tokenResponse.data;
     console.log('Access token from exchange-code:', access_token);
-
-    // const accountResponse = await axios({
-    //   method: 'get',
-    //   url: 'https://graph.facebook.com/v23.0/me/businesses',
-    //   headers: { Authorization: `Bearer ${access_token}` }
-    // });
-    // const businessId = accountResponse.data.data[0]?.id;
-    // let phone_number_id, waba_id;
-    // if (businessId) {
-    //   const wabaResponse = await axios({
-    //     method: 'get',
-    //     url: `https://graph.facebook.com/v23.0/${businessId}/whatsapp_business_accounts`,
-    //     headers: { Authorization: `Bearer ${access_token}` }
-    //   });
-    //   ({ phone_number_id, id: waba_id } = wabaResponse.data.data[0] || {});
-    // }
 
   try {
     const [result] = await pool.query(

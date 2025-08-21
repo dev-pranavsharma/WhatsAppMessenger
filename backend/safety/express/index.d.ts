@@ -1,4 +1,6 @@
 import 'express';
+import 'axios';
+
 
 declare global {
   namespace Express {
@@ -10,5 +12,14 @@ declare global {
         tenant_id?: number;
       };
     }
+  }
+}
+
+
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    meta?: {
+      accessToken?: string
+    };
   }
 }

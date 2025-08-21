@@ -4,6 +4,8 @@ import type { Request, Response } from 'express';
 import { isEmail, isPhoneNumber } from "../safety/validators.js";
 import type { ResultSetHeader } from "mysql2";
 import type { Role } from "../safety/types.ts";
+import axios from "axios";
+import fb from "../utils/axios.js";
 
 type Tenant = {
     id?: number,
@@ -43,7 +45,6 @@ export async function UpdateTenant(req:Request<{},{},Tenant>,res:Response){
             params.website_url,
             params.id
         ])
-        console.log(results);
         
         const response: SuccessResponse<{insertedId: number}> = {
             success: true,
@@ -103,7 +104,6 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
     } catch (error: any) {
         const status = error.statusCode || 500;
         const message = error.message || 'Something went wrong. Please contact support';
-        console.log(error);
         
         const errorResponse: ErrorResponse = {
             status: status,
@@ -116,21 +116,16 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
 
 export async function TenantbyID(req:Request,res:Response){    
     try {
-        const role_id = req.user.role_id;
-        const tenant_id = req.user.tenant_id;
-      const roleQuery = `SELECT id ,role_name FROM public.roles WHERE id=?`
-      const [results] =  await pool.query<Role []>(roleQuery, [role_id]);
+        const tenant_id = req.params.tenant_id;
       
-      if (results[0].role_name=='admin'){
         const tenantquery = `SELECT * FROM tenants WHERE id=?`
-        const [results] = await pool.query<ResultSetHeader>(tenantquery,[tenant_id])
+        const [results] = await pool.query<ResultSetHeader>(tenantquery,[tenant_id])        
             const response:  SuccessResponse = {
             success: true,
             message: null,
             data: results[0]
         }
         res.status(200).json(response);
-        }
     } catch (error) {
         const status = error.statusCode || 500;
         const message = error.message || 'Something went wrong. Please contact support';
@@ -143,4 +138,30 @@ export async function TenantbyID(req:Request,res:Response){
         res.status(status).json(errorResponse);
     }
 
+}
+export const TenantPhoneNumbers = async(req:Request,res:Response)=>{
+    try {
+        const waba_id = req.params.waba_id;
+        const token = req.body.access_token
+        const url = `${process.env.FACEBOOK_API_URL}/${process.env.FACEBOOK_API_VERSION}/${waba_id}/phone_numbers`        
+        const data = await fb.get(url, { meta: { accessToken: token } } )
+        console.log('TenantPhoneNumbers\n',data);
+        
+        const response:SuccessResponse = {
+            success:true,
+            message:'phone nnumbers list',
+            data:data.data
+        }
+        res.status(200).json(response)
+    } catch (error) {
+        const status = error.statusCode || 500;
+        const message = error.message || 'Something went wrong. Please contact support';
+        console.error('error\n',error);
+        
+        const errorResponse: ErrorResponse = {
+            status: status,
+            message: message
+        }
+        res.status(status).json(errorResponse);
+    }
 }

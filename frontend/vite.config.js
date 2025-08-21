@@ -1,13 +1,19 @@
-const { defineConfig } = require("vite");
-const react = require("@vitejs/plugin-react");
-const path = require("path");
+import path from "path"
+import tailwindcss from "@tailwindcss/vite"
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
 
-module.exports = defineConfig({
-  plugins: [react()],
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(),tailwindcss()],
+   server: {
+    port: 3000,      // 👈 use 3000
+    strictPort: true // fail if 3000 is taken (optional)
+    // host: true     // uncomment if you want LAN access
+  },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      "@assets": path.resolve(__dirname, "assets"),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
-});
+})

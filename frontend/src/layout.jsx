@@ -1,41 +1,47 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import LoadingSpinner from './components/LoadingSpinner';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
+import {useDispatch, useSelector} from 'react-redux'
+import LoadingSpinner from './components/loading-spinner';
+import Sidebar from './components/sidebar';
+import Header from './components/header';
 import { userService } from './services/api';
-import Login from './pages/Login';
+import Login from './pages/login';
 import { getCookie, setCookie } from './utils/Cookies';
+import { setUser } from './redux/slices/userSlice';
 
 const Layout = () => {
+  const dispatch=useDispatch()
+  const user = useSelector(state=>state.user.user)
   const cookie_user = getCookie('user')
-  const [user, setUser] = useState(cookie_user);
+  // const [user, setUser] = useState(cookie_user);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   /**
    * Check if user is authenticated on app load
    */
-  // useEffect(() => {
-  //   checkAuthStatus();
-  // }, []);
-  // const checkAuthStatus = async () => {
-  //   try {
-  //     const userData = await userService.getCurrentUser();
-  //     setUser(userData);
-  //   } catch (error) {
-  //     // User not authenticated, stay on login page
-  //     setUser(null);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+
+  const checkAuthStatus = async () => {
+    try {
+      const userData = await userService.getCurrentUser();
+      dispatch(setUser(userData))
+      setUser(userData);
+    } catch (error) {
+      // User not authenticated, stay on login page
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
 
   const handleLogin = async (credentials) => {
     try {
       const userData = await userService.login(credentials);
-      setUser(userData.user);
-      setCookie('user', JSON.stringify(userData.user))
+      console.log(userData);
+       dispatch(setUser(userData.user))
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -44,7 +50,7 @@ const Layout = () => {
   const handleRegister = async (credentials) => {
     try {
       const userData = await userService.register(credentials);
-      setUser(userData.user);
+      dispatch(setUser(userData.user));
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -70,11 +76,11 @@ const Layout = () => {
       </div>
     );
   }
-  if (!user) {
+  if (!user.id) {
     return <Login onRegister={handleRegister} onLogin={handleLogin} />;
   }
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen  flex">
       {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
