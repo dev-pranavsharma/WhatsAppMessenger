@@ -37,6 +37,8 @@ const Dashboard = () => {
     useEffect(() => {
     (async function(){
     const response = await tenantService.tenantById(user.tenant_id)
+    console.log('tenantById',response);
+    
     dispatch(setTenant(response.data))
     })()
   }, [user?.tenant_id]);
@@ -122,70 +124,38 @@ useEffect(()=>{
       {/* Statistics cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Campaigns stats */}
-        <Card className=''>
+        <Card className='py-3'>
           <CardHeader>
-            <CardTitle><h2>{stats.campaigns.total}</h2></CardTitle>
             <CardDescription>Total Campaigns</CardDescription>
+            <CardTitle><h2>{stats.campaigns.total}</h2></CardTitle>
           </CardHeader>
           <CardFooter> {stats.campaigns.active} active, {stats.campaigns.completed} completed </CardFooter>
 
         </Card>
 
-        {/* Contacts stats */}
-        <div className="card">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm ">Total Contacts</p>
-                <p className="text-2xl font-bold ">{stats.contacts.total_contacts || 0}</p>
-                <p className="text-xs  mt-1">
-                  {stats.contacts.opted_in_contacts || 0} opted in
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-success-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+         <Card className='py-3'>
+          <CardHeader>
+            <CardDescription>Total Contacts</CardDescription>
+            <CardTitle><h2>{stats.contacts.total_contacts || 0}</h2></CardTitle>
+          </CardHeader>
+          <CardFooter>{stats.contacts.opted_in_contacts || 0} opted in</CardFooter>
+        </Card>
 
-        {/* Templates stats */}
-        <div className="card">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm ">Message Templates</p>
-                <p className="text-2xl font-bold ">{stats.templates.total}</p>
-                <p className="text-xs  mt-1">
-                  {stats.templates.approved} approved
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-6 h-6 text-warning-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <Card className='py-3'>
+          <CardHeader>
+            <CardDescription>Message Templates</CardDescription>
+            <CardTitle><h2>{stats.templates.total}</h2></CardTitle>
+          </CardHeader>
+          <CardFooter>{stats.templates.approved} approved</CardFooter>
+        </Card>
 
-        {/* Performance stats */}
-        <div className="card">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm ">Delivery Rate</p>
-                <p className="text-2xl font-bold ">
-                  {stats.contacts.opt_in_rate || '0'}%
-                </p>
-                <p className="text-xs  mt-1">
-                  Last 30 days
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-6 h-6 text-error-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <Card className='py-3'>
+          <CardHeader>
+            <CardDescription>Delivery Rate</CardDescription>
+            <CardTitle><h2>{stats.contacts.opt_in_rate || '0'}%</h2></CardTitle>
+          </CardHeader>
+          <CardFooter>Last 30 days</CardFooter>
+        </Card>
       </div>
 
       {/* Quick actions */}

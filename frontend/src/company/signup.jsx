@@ -3,7 +3,7 @@ import CompanyForm from './company-form'
 import { Link } from 'react-router-dom'
 import { ModeToggle } from '@/components/mode-toggle'
 
-const CompanyProfile = () => {
+const CompanySignup= () => {
   return (
     <div className='flex flex-col justify-between align-items-center w-full min-h-[100vh]'>
       <nav className='flex w-full items-center justify-between p-4'>
@@ -34,4 +34,4 @@ const CompanyProfile = () => {
   )
 }
 
-export default CompanyProfile
+export default CompanySignup

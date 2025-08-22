@@ -7,13 +7,13 @@ import Campaigns from './pages/campaigns';
 import Templates from './pages/templates';
 import Contacts from './pages/contacts';
 import Settings from './pages/settings';
-import Sidebar from './components/sidebar';
-import Header from './components/header';
 import LoadingSpinner from './components/loading-spinner';
 import PrivacyPolicy from './pages/privacy-policy';
 import TermsOfService from './pages/terms-of-service';
 const CompanyLayout = lazy(() => import("./company/layout"))
-const CompanyProfile = lazy(() => import('./company/company-profile'))
+const CompanySignup = lazy(() => import('./company/signup'))
+const CompanyProfile =  lazy(()=>import('./company/profile'))
+
 
 
 const Layout = lazy(() => import('./layout'))
@@ -26,7 +26,7 @@ function App() {
         {/* Page content */}
         <Routes>
           <Route path='/company' element={<CompanyLayout />}>
-            <Route path='/company/profile' element={<CompanyProfile />} />
+            <Route path='/company/signup' element={<CompanySignup />} />
           </Route>
           <Route path='/privacy_policy' element={<PrivacyPolicy />} />
           <Route path='/terms_and_conditions' element={<TermsOfService />} />
@@ -38,6 +38,7 @@ function App() {
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path='/company/profile' element={<CompanyProfile />} />
           </Route>
 
         </Routes>

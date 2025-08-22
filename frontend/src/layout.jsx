@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import LoadingSpinner from './components/loading-spinner';
-import Sidebar from './components/sidebar';
-import Header from './components/header';
 import { userService } from './services/api';
 import Login from './pages/login';
 import { getCookie, setCookie } from './utils/Cookies';
 import { setUser } from './redux/slices/userSlice';
+import { SidebarProvider , SidebarTrigger } from '@components/ui/sidebar';
+import AppSidebar from './components/sidebar';
+import Navbar from '@components/navbar';
 
 const Layout = () => {
   const dispatch=useDispatch()
@@ -80,19 +81,11 @@ const Layout = () => {
     return <Login onRegister={handleRegister} onLogin={handleLogin} />;
   }
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
-        user={user}
-      />
-
-      {/* Main content area */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'
-        }`}>
-        {/* Top header */}
-        <Header
+    <div className='bg-background text-foreground'>
+      <SidebarProvider>
+      <AppSidebar />
+      <main className='w-full'>
+        <Navbar
           user={user}
           onLogout={handleLogout}
           onToggleSidebar={toggleSidebar}
@@ -101,7 +94,8 @@ const Layout = () => {
         <main className="flex-1 p-6">
           <Outlet />
         </main>
-      </div>
+    </main>
+    </SidebarProvider>
     </div>
   )
 }

@@ -16,16 +16,16 @@ const Templates = ({ user }) => {
   /**
    * Load templates on component mount
    */
-  useEffect(() => {
-    loadTemplates();
-  }, []);
+  // useEffect(() => {
+  //   loadTemplates();
+  // }, []);
 
   /**
    * Filter templates when search or filters change
    */
-  useEffect(() => {
-    filterTemplates();
-  }, [templates, searchQuery, statusFilter, categoryFilter]);
+  // useEffect(() => {
+  //   filterTemplates();
+  // }, [templates, searchQuery, statusFilter, categoryFilter]);
 
   /**
    * Fetch all templates from API
