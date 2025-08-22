@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { BarChart3, MessageSquare, Users, FileText, Settings, LayoutDashboard, ChevronLeft, ChevronRight, Check, BadgeCheck, CheckCheck } from 'lucide-react';
 import { getCookie } from '../utils/Cookies';
 import { useSelector } from 'react-redux';
+import { Avatar , AvatarImage , AvatarFallback} from '@components/ui/avatar';
 
 const Sidebar = ({ isOpen, onToggle }) => {
   const user = useSelector(state=>state.user.user)
@@ -61,7 +62,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
   
 
   return (
-    <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-50 ${isOpen ? 'w-64' : 'w-16'
+    <div className={`fixed left-0 top-0 min-h-screen border-r border-gray-700 transition-all duration-300 z-50 ${isOpen ? 'w-64' : 'w-16'
       }`}>
       {/* Sidebar header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -100,11 +101,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
         <>
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 -100 rounded-full flex items-center justify-center">
-              <span className="text-primary-700 font-medium text-sm">
-                {user?.first_name?.charAt(0).toUpperCase() || 'U'}
-              </span>
-            </div>
+            <Avatar>
+            <AvatarImage src={user?.img_url} alt="@shadcn" />
+            <AvatarFallback>{user?.first_name?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+            </Avatar>
             <div className="flex-1 min-w-0">
               <p className="font-medium  truncate"> {user?.first_name} {user?.last_name} </p>
               <p className="text-sm  truncate"> {user?.email} </p>

@@ -44,7 +44,7 @@ const Header = ({ user, onLogout, onToggleSidebar, sidebarOpen }) => {
   };
 
   return (
-    <header className=" bg-background text-foreground px-6 py-4">
+    <header className="bg-background text-foreground px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Left side - Mobile menu button and search */}
         <div className="flex items-center gap-4 flex-1">

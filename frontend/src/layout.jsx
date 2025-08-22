@@ -80,7 +80,7 @@ const Layout = () => {
     return <Login onRegister={handleRegister} onLogin={handleLogin} />;
   }
   return (
-    <div className="min-h-screen  flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}

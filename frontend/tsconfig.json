@@ -1,16 +1,22 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowJs": true,          // allow existing .js/.jsx files
+    "checkJs": false,         // don't typecheck .js unless you want errors in them
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,           // ✅ prevents overwriting your .js files
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "checkJs": false,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "target": "ESNext",
-    "moduleResolution": "Node",
-    "lib": ["ESNext", "DOM"]
+    }
   },
-  "include": ["src", "src/**/*"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

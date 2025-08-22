@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquare, Eye, EyeOff } from 'lucide-react';
+import { MessageSquare, Eye, EyeOff, Loader2Icon } from 'lucide-react';
 import LoadingSpinner from '../components/loading-spinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-const Login = ({ onLogin,onRegister }) => {
+const Login = ({ onLogin, onRegister }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -33,28 +35,28 @@ const Login = ({ onLogin,onRegister }) => {
    * Handle form submission
    * @param {Event} e - Form submit event
    */
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  try {
-    const result = isRegister
-      ? await onRegister(formData)   // call registration handler
-      : await onLogin(formData);     // call login handler
+    try {
+      const result = isRegister
+        ? await onRegister(formData)   // call registration handler
+        : await onLogin(formData);     // call login handler
 
-    if (!result.success) {
-      setError(result.error || (isRegister ? 'Registration failed' : 'Login failed'));
+      if (!result.success) {
+        setError(result.error || (isRegister ? 'Registration failed' : 'Login failed'));
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError('An unexpected error occurred');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   console.log(formData);
-  
+
   /**
    * Toggle password visibility
    */
@@ -73,63 +75,59 @@ const handleSubmit = async (e) => {
 
 
   return (
-    <div className="min-h-screen  flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-background text-foreground flex gap-10">
+      <div className="w-8/12 flex flex-col justify-between p-10 border-r border-forground">
         {/* Header */}
-        <div className="text-center">
-          <div className="mx-auto w-16 h-16 -600 rounded-2xl flex items-center justify-center mb-4">
-            <MessageSquare className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold ">
-            WhatsApp Campaign Manager
-          </h1>
-          <p className="mt-2 ">
-            {isRegister ? 'Create your account' : 'Sign in to your account'}
-          </p>
-        </div>    
-
+        <div className="">
+            <img src='/assets/icons/logo.png' className="w-48 h-auto" />
+        </div>
+        <div>
+        <h1 className="max-w-[80%]"> Manage your Marketing Campaign and Reputation Management With Impretio </h1>
+                {/* Features List */}
+        <div className="mt-5">
+          <ul className="space-y-2 text-sm ">
+            <li className="flex items-center gap-2">
+              WhatsApp Business API integration
+            </li>
+            <li className="flex items-center gap-2">
+              Campaign management and scheduling
+            </li>
+            <li className="flex items-center gap-2">
+              Message template creation
+            </li>
+            <li className="flex items-center gap-2">
+              Contact management and segmentation
+            </li>
+            <li className="flex items-center gap-2">
+              Performance analytics and reporting
+            </li>
+          </ul>
+        </div>
+        </div>
+       <p className='text-gray-400'> Please read <Link target='__blank' to='/privacy_policy'>privacy policy</Link> and <Link target='__blank' to='terms_and_conditions'>terms and conditions</Link></p>
+      </div>
         {/* Login Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
+        <div className='w-4/12 flex flex-col justify-center items-center'>
+        <Card className='min-w-md max-w-lg'>
+        <CardHeader>
+          <CardTitle>Impretio</CardTitle>
+          <CardDescription>Login in to your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+        <form className="flex-col" onSubmit={handleSubmit}>
+          <div className="space-y-10">
             {/* Username Field */}
             <div>
-              <label htmlFor="email" className="form-label">
-                Email
-              </label>
-              <Input
-                id="email"
-                name="email"
-                type="text"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="Enter your email"
-                disabled={loading}
-              />
+              <Label htmlFor="email"> Email </Label>
+              <Input id="email" name="email" type="text" required value={formData.email} onChange={handleChange} className="form-input" placeholder="Enter your email" disabled={loading} />
             </div>
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
+              <Label htmlFor="password"> Password </Label>
               <div className="relative flex gap-x-5">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="form-input pr-10"
-                  placeholder="Enter your password"
-                  disabled={loading}
-                />
-                <Button
-                  onClick={togglePasswordVisibility}
-                  disabled={loading}  
-                >
+                <Input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleChange} className="form-input pr-10" placeholder="Enter your password" disabled={loading} />
+                <Button  type="button"  className='absolute right-0' variant='ghost' onClick={togglePasswordVisibility} disabled={loading} >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
                   ) : (
@@ -137,7 +135,16 @@ const handleSubmit = async (e) => {
                   )}
                 </Button>
               </div>
-            </div>  
+            </div>
+                      {
+            loading ? (
+              <Button disabled className='w-full'>
+                <Loader2Icon className="animate-spin" />
+                logging
+              </Button>
+            ) : (
+               <Button className='w-full' type="submit"> log in </Button>
+            )}
           </div>
 
           {/* Error Message */}
@@ -146,67 +153,17 @@ const handleSubmit = async (e) => {
               {error}
             </div>
           )}
-
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full btn btn-primary btn-lg"
-          >
-            {loading ? (
-              <div className="flex items-center justify-center gap-2">
-                <LoadingSpinner size="sm" />
-                <span>{isRegister ? 'Creating Account...' : 'Signing In...'}</span>
-              </div>
-            ) : (
-              <span>{isRegister ? 'Create Account' : 'Sign In'}</span>
-            )}
-          </Button>
-
-          {/* Toggle between login and register */}
-          <div className="text-center">
+        </form>   
+        </CardContent>
+        <CardFooter className=''>
+          <Button className='w-full' variant='secondary' asChild>
             <Link to='/company/profile'>Don't have an account? Create one</Link>
-            {/* <button
-              type="button"
-              onClick={toggleMode}
-              className="text-primary-600 hover:text-primary-700 font-medium text-sm"
-              disabled={loading}
-            >
-              {isRegister 
-                ? 'Already have an account? Sign in' 
-                : "Don't have an account? Create one"
-              }
-            </button> */}
-          </div>
-        </form>
-
-        {/* Features List */}
-        <div className="mt-8 bg-white rounded-lg p-6 border border-gray-200">
-          <h3 className="font-medium  mb-4">Features included:</h3>
-          <ul className="space-y-2 text-sm ">
-            <li className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 -600 rounded-full"></div>
-              WhatsApp Business API integration
-            </li>
-            <li className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 -600 rounded-full"></div>
-              Campaign management and scheduling
-            </li>
-            <li className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 -600 rounded-full"></div>
-              Message template creation
-            </li>
-            <li className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 -600 rounded-full"></div>
-              Contact management and segmentation
-            </li>
-            <li className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 -600 rounded-full"></div>
-              Performance analytics and reporting
-            </li>
-          </ul>
+          </Button>
+        </CardFooter>
+        </Card>
         </div>
-      </div>
+
+
     </div>
   );
 };

@@ -17,6 +17,7 @@ import LoadingSpinner from '../components/loading-spinner';
 import { getCookie } from '../utils/Cookies';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPhoneNumbers, setTenant } from '../redux/slices/userSlice';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Dashboard = () => {
   const dispatch = useDispatch()
@@ -84,7 +85,7 @@ useEffect(()=>{
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold ">
+          <h1 className="font-bold ">
             Welcome back, {user?.first_name || user?.last_name}!
           </h1>
           <p className=" mt-1">
@@ -121,22 +122,14 @@ useEffect(()=>{
       {/* Statistics cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Campaigns stats */}
-        <div className="card">
-          <div className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm ">Total Campaigns</p>
-                <p className="text-2xl font-bold ">{stats.campaigns.total}</p>
-                <p className="text-xs  mt-1">
-                  {stats.campaigns.active} active, {stats.campaigns.completed} completed
-                </p>
-              </div>
-              <div className="w-12 h-12 -100 rounded-lg flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-primary-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <Card className=''>
+          <CardHeader>
+            <CardTitle><h2>{stats.campaigns.total}</h2></CardTitle>
+            <CardDescription>Total Campaigns</CardDescription>
+          </CardHeader>
+          <CardFooter> {stats.campaigns.active} active, {stats.campaigns.completed} completed </CardFooter>
+
+        </Card>
 
         {/* Contacts stats */}
         <div className="card">
