@@ -3,11 +3,12 @@ import { createSlice } from "@reduxjs/toolkit"
 const initialState = {
     user:{},
     tenant:{},
-    phoneNumbers:''
+    phoneNumbers:'',
+    templates:[]
 }
 
-const UserSlice = createSlice({
-    name:'user',
+const dataSlice = createSlice({
+    name:'data',
     initialState,
     reducers:{
         setUser :(state,action)=>{            
@@ -18,8 +19,11 @@ const UserSlice = createSlice({
         },
         setPhoneNumbers:(state,action)=>{
             state.phoneNumbers = action.payload
+        },
+        setTemplates:(state,action)=>{
+            state.templates = action.payload
         }
     }
 })
-export const {setUser,setTenant,setPhoneNumbers} =  UserSlice.actions
-export default UserSlice.reducer
+export const {setUser,setTenant,setPhoneNumbers,setTemplates} =  dataSlice.actions
+export default dataSlice.reducer

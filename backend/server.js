@@ -11,6 +11,7 @@ import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js';
 import tenantRoutes from './routes/tenants.routes.ts';
 import cookieParser from 'cookie-parser';
+import mongoDB from './database/mongodb.js';
 
 const app = express();
 app.use(cookieParser());
@@ -28,17 +29,17 @@ app.use(helmet({
   }
 }));
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: {
-    error: 'Too many requests from this IP, please try again later.'
-  }
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // Limit each IP to 100 requests per windowMs
+//   message: {
+//     error: 'Too many requests from this IP, please try again later.'
+//   }
+// });
 
-app.use('/api/', limiter);
+// app.use('/api/', limiter);
 
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://whats-app-messenger-steel.vercel.app','https://www.impretio.com'];
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://whats-app-messenger-steel.vercel.app','https://www.impretio.com',null];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -99,7 +100,7 @@ app.get('/api', (req, res) => {
     endpoints: {
       users: '/api/users',
       templates: '/api/templates',
-      contacts: '/api/contacts',
+      // contacts: '/api/contacts',
       tenants: '/api/tenants',
       health: '/api/health'
     }
@@ -141,7 +142,11 @@ async function startServer() {
     // Test database connection
     console.log('Testing database connection...');
     const dbConnected = await testConnection();
-
+    const mongo = await mongoDB()
+     if (!mongo) {
+      console.error('Failed to connect to mongodb. Please check your database configuration.');
+      process.exit(1);
+    }
     if (!dbConnected) {
       console.error('Failed to connect to database. Please check your database configuration.');
       process.exit(1);

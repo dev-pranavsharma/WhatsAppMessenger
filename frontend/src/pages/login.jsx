@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-const Login = ({ onLogin, onRegister }) => {
+const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -15,7 +15,6 @@ const Login = ({ onLogin, onRegister }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isRegister, setIsRegister] = useState(false);
 
   /**
    * Handle form input changes
@@ -41,9 +40,7 @@ const Login = ({ onLogin, onRegister }) => {
     setError('');
 
     try {
-      const result = isRegister
-        ? await onRegister(formData)   // call registration handler
-        : await onLogin(formData);     // call login handler
+      const result = await onLogin(formData);
 
       if (!result.success) {
         setError(result.error || (isRegister ? 'Registration failed' : 'Login failed'));
@@ -76,7 +73,7 @@ const Login = ({ onLogin, onRegister }) => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex gap-10">
-      <div className="w-8/12 flex flex-col justify-between p-10 border-r border-forground">
+      <div className="w-7/12 flex flex-col justify-between p-10 border-r border-forground">
         {/* Header */}
         <div className="">
           <img src='/assets/icons/logo.png' className="w-48 h-auto" />
@@ -107,8 +104,9 @@ const Login = ({ onLogin, onRegister }) => {
         <p className='text-gray-400'> Please read <Link target='__blank' to='/privacy_policy'>privacy policy</Link> and <Link target='__blank' to='terms_and_conditions'>terms and conditions</Link></p>
       </div>
       {/* Login Form */}
-      <div className='w-4/12 flex flex-col justify-center items-center'>
-        <Card className='min-w-md max-w-lg'>
+      <div className='w-5/12 flex flex-col justify-center items-center'>
+        <h2 className='text-left mb-3'>Login </h2>
+        <Card className='min-w-lg max-w-xl'>
           <CardHeader>
             <CardTitle>Impretio</CardTitle>
             <CardDescription>Login in to your account</CardDescription>

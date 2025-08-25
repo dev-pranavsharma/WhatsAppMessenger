@@ -13,8 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const CompanyForm = () => {
     const [loading, setLoading] = useState(false);
@@ -52,8 +54,10 @@ const CompanyForm = () => {
                     <CardHeader>
                     <CardTitle>Your Business Details</CardTitle>
                     <CardDescription> Fill your business information </CardDescription>
+                    <CardAction>Already have an account ? <Link to='/login' className="underline" >login</Link></CardAction>
                     </CardHeader>
                 <CardContent >
+                    <article className='grid grid-cols-2 gap-5'>
                             <div>
                                 <Label htmlFor="business_email"> Business Email </Label>
                                 <Input type="email" placeholder="support@windandwool.com" id="business_email" name="business_email" value={value.business_email} onChange={(e) => setvalue(e)} className="form-Input" required />
@@ -74,7 +78,7 @@ const CompanyForm = () => {
                                 <Label htmlFor="display_name" > Business Display Name </Label>
                                 <Input type="text" placeholder="Wind & Wool" id="display_name" name="display_name" value={value.display_name} onChange={(e) => setvalue(e)} className="form-Input" />
                             </div>
-                            <div className='select-wrapper'>
+                            <div>
                                 <Label htmlFor="business_category" >Business Category</Label>
                                 <Select
                                     onValueChange={(value) => setvalue({ target: { name: "business_category", value } })}
@@ -82,7 +86,7 @@ const CompanyForm = () => {
                                     name="business_category"
                                     id="business_category"
                                 >
-                                    <SelectTrigger className="form-select w-full">
+                                    <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -115,34 +119,34 @@ const CompanyForm = () => {
                                 <Label htmlFor="business_description" >Business Description </Label>
                                 <Input type="text" placeholder="Bespoke artisan apparel and lifestyle goods from upcoming designers." id="business_description" name="business_description" value={value.business_description} onChange={(e) => setvalue(e)} className="form-Input" />
                             </div>
-                    <CardFooter>
+                            </article>
+                    <CardFooter className={'mt-10'}>
                         <small>All the following information is required to pre-fill and streamline the Facebook and WhatsApp Business onboarding process.</small>
                     </CardFooter>
                 </CardContent>
             </Card>
+         
         )
     }
     const Step2 = ({ value, setvalue }) => {
         return (
-            <div className="card">
-                <div className="card-header">
-                    <h2 className="font-semibold ">Where You Operate Your Business</h2>
-                    <p className="text-sm  mt-1">
-                        Fill your business address and other location details
-                    </p>
-                </div>
-                <div className="card-body">
-                    <article className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Where You Operate Your Business</CardTitle>
+                    <CardDescription>Fill your business address and other location details</CardDescription>
+                </CardHeader>
+                <CardContent>
+                        <article className="space-y-6">
                         <div>
                             <Label htmlFor="address_line_1" >Address Line 1 </Label>
                             <Input type="text" placeholder="1 Hacker Way" id="address_line_1" name="address_line_1" value={value.addressline1} onChange={(e) => setvalue(e)} className="form-Input" />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <Label htmlFor="address_line_2" >Address Line 2 </Label>
                                 <Input type="text" placeholder="Suite 1" id="address_line_2" name="address_line_2" value={value.addressline2} onChange={(e) => setvalue(e)} className="form-Input" />
                             </div>
-                            <div className='select-wrapper'>
+                            <div className="w-full" >
                                 <Label htmlFor="country" >Country</Label>
                                 <Select
                                     onValueChange={(value) => setvalue({ target: { name: "country", value } })}
@@ -150,11 +154,12 @@ const CompanyForm = () => {
                                     name="country"
                                     id="country"
                                 >
-                                    <SelectTrigger className="form-select">
+                                    <SelectTrigger className='w-full' >
                                         <SelectValue placeholder="Select country" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="select country">Select country</SelectItem>
+                                        <SelectItem value="IN">India</SelectItem>
                                         <SelectItem value="AF">Afghanistan</SelectItem>
                                         <SelectItem value="AL">Albania</SelectItem>
                                         <SelectItem value="DZ">Algeria</SelectItem>
@@ -166,7 +171,6 @@ const CompanyForm = () => {
                                         <SelectItem value="EG">Egypt</SelectItem>
                                         <SelectItem value="FR">France</SelectItem>
                                         <SelectItem value="DE">Germany</SelectItem>
-                                        <SelectItem value="IN">India</SelectItem>
                                         <SelectItem value="ID">Indonesia</SelectItem>
                                         <SelectItem value="IT">Italy</SelectItem>
                                         <SelectItem value="JP">Japan</SelectItem>
@@ -181,7 +185,7 @@ const CompanyForm = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className='select-wrapper'>
+                            <div >
                                 <Label htmlFor="state" >State</Label>
                                 <Select
                                     onValueChange={(value) => setvalue({ target: { name: "state", value } })}
@@ -189,11 +193,15 @@ const CompanyForm = () => {
                                     name="state"
                                     id="state"
                                 >
-                                    <SelectTrigger className="form-select">
+                                    <SelectTrigger className={'w-full'} >
                                         <SelectValue placeholder="Select state" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="null">Select state</SelectItem>
+                                        <SelectItem value="DL">Delhi</SelectItem>
+                                        <SelectItem value="UP">Uttar Pradesh</SelectItem>
+                                        <SelectItem value="MH">Maharashtra</SelectItem>
+                                        <SelectItem value="HR">Haryana</SelectItem>
                                         <SelectItem value="AN">Andaman and Nicobar Islands</SelectItem>
                                         <SelectItem value="AP">Andhra Pradesh</SelectItem>
                                         <SelectItem value="AR">Arunachal Pradesh</SelectItem>
@@ -202,10 +210,8 @@ const CompanyForm = () => {
                                         <SelectItem value="CH">Chandigarh</SelectItem>
                                         <SelectItem value="CT">Chhattisgarh</SelectItem>
                                         <SelectItem value="DN">Dadra and Nagar Haveli and Daman and Diu</SelectItem>
-                                        <SelectItem value="DL">Delhi</SelectItem>
                                         <SelectItem value="GA">Goa</SelectItem>
                                         <SelectItem value="GJ">Gujarat</SelectItem>
-                                        <SelectItem value="HR">Haryana</SelectItem>
                                         <SelectItem value="HP">Himachal Pradesh</SelectItem>
                                         <SelectItem value="JK">Jammu and Kashmir</SelectItem>
                                         <SelectItem value="JH">Jharkhand</SelectItem>
@@ -213,7 +219,6 @@ const CompanyForm = () => {
                                         <SelectItem value="KL">Kerala</SelectItem>
                                         <SelectItem value="LD">Lakshadweep</SelectItem>
                                         <SelectItem value="MP">Madhya Pradesh</SelectItem>
-                                        <SelectItem value="MH">Maharashtra</SelectItem>
                                         <SelectItem value="MN">Manipur</SelectItem>
                                         <SelectItem value="ML">Meghalaya</SelectItem>
                                         <SelectItem value="MZ">Mizoram</SelectItem>
@@ -226,13 +231,12 @@ const CompanyForm = () => {
                                         <SelectItem value="TN">Tamil Nadu</SelectItem>
                                         <SelectItem value="TG">Telangana</SelectItem>
                                         <SelectItem value="TR">Tripura</SelectItem>
-                                        <SelectItem value="UP">Uttar Pradesh</SelectItem>
                                         <SelectItem value="UT">Uttarakhand</SelectItem>
                                         <SelectItem value="WB">West Bengal</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className='select-wrapper'>
+                            <div >
                                 <Label htmlFor="timezone" >Timezone</Label>
                                 <Select
                                     onValueChange={(value) => setvalue({ target: { name: "timezone", value } })}
@@ -240,17 +244,17 @@ const CompanyForm = () => {
                                     name="timezone"
                                     id="timezone"
                                 >
-                                    <SelectTrigger className="form-select">
+                                    <SelectTrigger className={'w-full'} >
                                         <SelectValue placeholder="Select timezone" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="null">Select timezone</SelectItem>
+                                        <SelectItem value="Asia/Kolkata">Asia/Kolkata (UTC+05:30)</SelectItem>
                                         <SelectItem value="Africa/Abidjan">Africa/Abidjan (UTC+00:00)</SelectItem>
                                         <SelectItem value="Africa/Nairobi">Africa/Nairobi (UTC+03:00)</SelectItem>
                                         <SelectItem value="America/Los_Angeles">America/Los_Angeles (UTC-08:00)</SelectItem>
                                         <SelectItem value="America/New_York">America/New_York (UTC-05:00)</SelectItem>
                                         <SelectItem value="Asia/Dubai">Asia/Dubai (UTC+04:00)</SelectItem>
-                                        <SelectItem value="Asia/Kolkata">Asia/Kolkata (UTC+05:30)</SelectItem>
                                         <SelectItem value="Asia/Tokyo">Asia/Tokyo (UTC+09:00)</SelectItem>
                                         <SelectItem value="Australia/Sydney">Australia/Sydney (UTC+10:00)</SelectItem>
                                         <SelectItem value="Europe/London">Europe/London (UTC+00:00)</SelectItem>
@@ -260,15 +264,16 @@ const CompanyForm = () => {
                                 </Select>
                             </div>
                         </div>
-                        <div className="flex w-full justify-center">
+                        <Button className="flex w-full justify-center">
                             <WhatsAppSignupPopup prefill={value} />
-                        </div>
+                        </Button>
                     </article>
-                    <div className="card-footer">
-                        <small className="text-center">All the following information is required to pre-fill and streamline the Facebook and WhatsApp Business onboarding process.</small>
-                    </div>
-                </div>
-            </div>
+                </CardContent>
+                <CardFooter> 
+                <small className="text-center">All the following information is required to pre-fill and streamline the Facebook and WhatsApp Business onboarding process.</small>
+                </CardFooter>
+            </Card>
+
         )
     }
     const Step3 = () => {
@@ -317,14 +322,12 @@ const CompanyForm = () => {
             }
         }
         return (
-            <div className="card">
-                <div className="card-header">
-                    <h2 className="font-semibold ">Admin Details</h2>
-                    <p className="text-sm  mt-1">
-                        Fill admin details here
-                    </p>
-                </div>
-                <div className="card-body">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Admin Details</CardTitle>
+                    <CardDescription> Fill admin details here </CardDescription>
+                </CardHeader>
+                <CardContent>
                     <article className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -356,14 +359,14 @@ const CompanyForm = () => {
                             </div>
                         </div>
                             <div className="text-center">
-                            <button onClick={RegisterAdmin} className="btn btn-primary">{loading ?'Registering':'Register'}</button>
+                            <Button onClick={RegisterAdmin} className="w-full">{loading ?'Registering':'Register'}</Button>
                             </div>
                     </article>
-                    <div className="card-footer">
-                        <small className="text-center">The above user will be assigned as admin and owner of the account created with us with facebook business </small>
-                    </div>
-                </div>
-            </div>
+                    <CardFooter className={'mt-10 text-center'}>
+                        <small className="w-full text-center">The above user will be assigned as admin and owner of the account created with us with facebook business </small>
+                    </CardFooter>
+                </CardContent>
+            </Card>
         )
     }
     const steps = useMemo(() => [Step1, Step2, Step3], []);
@@ -387,16 +390,10 @@ const CompanyForm = () => {
         )
     }
     return (
-        <section className="w-full pt-5">
-            <h3 className="font-semibold  text-center ">Create your Account with <span className="text-primary-700">Impretio</span></h3>
-            <h6 className="font-medium  text-center">and make your marketing journey smooth.</h6>
-            <section className="mt-5">
                 <Stepper steps={steps}
                     value={profileForm}
                     setvalue={handleProfileChange}
                 />
-            </section>
-        </section>
     )
 }
 

@@ -103,7 +103,11 @@ export const campaignService = {
 
 export const templateService = {
 
-  getTemplates: () => apiRequest('/templates'),
+  getTemplates: ({waba_id,access_token}) =>{ return apiRequest(`/templates/${waba_id}/all`,{  
+    method:"POST",
+    body:{
+      access_token:access_token
+    }})},
 
   getTemplate: (templateId) => apiRequest(`/templates/${templateId}`),
 

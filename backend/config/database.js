@@ -16,16 +16,8 @@ const dbConfig = {
   charset: 'utf8mb4'
 };
 
-/**
- * Create MySQL connection pool
- * @returns {Object} MySQL connection pool
- */
- export const pool = mysql.createPool(dbConfig);
+export const pool = mysql.createPool(dbConfig);
 
-/**
- * Test database connection
- * @returns {Promise<Boolean>} Connection status
- */
 export const testConnection = async () => {
   try {
     const connection = await pool.getConnection();
@@ -38,12 +30,6 @@ export const testConnection = async () => {
   }
 };
 
-/**
- * Execute database query with parameters
- * @param {String} query - SQL query string
- * @param {Array} params - Query parameters
- * @returns {Promise<Array>} Query results
- */
 export const executeQuery = async (query, params = []) => {
   try {
     const [results] = await pool.execute(query, params);
@@ -54,10 +40,6 @@ export const executeQuery = async (query, params = []) => {
   }
 };
 
-/**
- * Initialize database tables
- * Creates all required tables for WhatsApp campaign management
- */
 export const initializeTables = async () => {
   try {
     // Users table

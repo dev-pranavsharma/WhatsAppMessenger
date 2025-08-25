@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  MessageSquare, 
-  Users, 
-  FileText, 
-  BarChart3, 
-  Plus, 
+import {
+  MessageSquare,
+  Users,
+  FileText,
+  BarChart3,
+  Plus,
   ArrowRight,
   CheckCircle,
   Clock,
@@ -16,42 +16,26 @@ import { campaignService, contactService, templateService, tenantService, WABuss
 import LoadingSpinner from '../components/loading-spinner';
 import { getCookie } from '../utils/Cookies';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPhoneNumbers, setTenant } from '../redux/slices/userSlice';
+import { setPhoneNumbers, setTenant } from '../redux/slices/dataSlice';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Dashboard = () => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user.user)
-  const tenant = useSelector(state=>state.user.tenant)
-  const phone_numbers = useSelector(state=>state.user.phoneNumbers)
+  const user = useSelector(state => state.data.user)
+  const tenant = useSelector(state => state.data.tenant)
+  const phone_numbers = useSelector(state => state.data.phoneNumbers)
+  const templates = useSelector(state=>state.data.templates)
   const [stats, setStats] = useState({
     campaigns: { total: 0, active: 0, completed: 0 },
     contacts: { total: 0, opted_in: 0 },
-    templates: { total: 0, approved: 0 }
+    templates: { total: templates.length, approved: 0 }
   });
   const [recentCampaigns, setRecentCampaigns] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   console.log(user);
 
-    useEffect(() => {
-    (async function(){
-    const response = await tenantService.tenantById(user.tenant_id)
-    console.log('tenantById',response);
-    
-    dispatch(setTenant(response.data))
-    })()
-  }, [user?.tenant_id]);
 
-useEffect(()=>{
-  if(tenant?.waba_id){
-  (async function() {
-    const response = await WABussinessService.phoneNumbers(tenant.waba_id,tenant.access_token)
-    console.log(response);
-    dispatch(setPhoneNumbers(response.data))
-  })()
-  }
-},[tenant?.waba_id])
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -72,7 +56,7 @@ useEffect(()=>{
     );
   };
   console.log(phone_numbers);
-  
+
 
   // if (loading) {
   //   return (
@@ -133,7 +117,7 @@ useEffect(()=>{
 
         </Card>
 
-         <Card className='py-3'>
+        <Card className='py-3'>
           <CardHeader>
             <CardDescription>Total Contacts</CardDescription>
             <CardTitle><h2>{stats.contacts.total_contacts || 0}</h2></CardTitle>

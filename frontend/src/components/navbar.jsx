@@ -7,7 +7,7 @@ import { SidebarTrigger } from '@components/ui/sidebar';
 
 
 
-const Navbar = ({ user, onLogout, onToggleSidebar, sidebarOpen }) => {
+const Navbar = ({ user, onToggleSidebar, sidebarOpen }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -39,10 +39,6 @@ const Navbar = ({ user, onLogout, onToggleSidebar, sidebarOpen }) => {
   /**
    * Handle logout click
    */
-  const handleLogoutClick = () => {
-    setShowUserMenu(false);
-    onLogout();
-  };
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 gap">

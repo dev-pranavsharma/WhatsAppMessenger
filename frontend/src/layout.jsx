@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import {useDispatch, useSelector} from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import LoadingSpinner from './components/loading-spinner';
-import { userService } from './services/api';
+import { tenantService, userService, WABussinessService } from './services/api';
 import Login from './pages/login';
 import { getCookie, setCookie } from './utils/Cookies';
-import { setUser } from './redux/slices/userSlice';
-import { SidebarProvider , SidebarTrigger } from '@components/ui/sidebar';
+import { setPhoneNumbers, setTenant, setUser } from './redux/slices/dataSlice';
+import { SidebarProvider, SidebarTrigger } from '@components/ui/sidebar';
 import AppSidebar from './components/sidebar';
 import Navbar from '@components/navbar';
 
 const Layout = () => {
-  const dispatch=useDispatch()
-  const user = useSelector(state=>state.user.user)
-  const cookie_user = getCookie('user')
-  // const [user, setUser] = useState(cookie_user);
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.data.user)
+  const tenant = useSelector(state => state.data.tenant)
+  const phone_numbers = useSelector(state => state.data.phoneNumbers)
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -26,14 +26,14 @@ const Layout = () => {
     try {
       const userData = await userService.getCurrentUser();
       dispatch(setUser(userData))
-      setUser(userData);
     } catch (error) {
+      
       // User not authenticated, stay on login page
-      setUser(null);
     } finally {
       setLoading(false);
     }
   };
+  
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -41,35 +41,31 @@ const Layout = () => {
   const handleLogin = async (credentials) => {
     try {
       const userData = await userService.login(credentials);
-      console.log(userData);
-       dispatch(setUser(userData.user))
+      dispatch(setUser(userData.user))
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
   };
-  const handleRegister = async (credentials) => {
-    try {
-      const userData = await userService.register(credentials);
-      dispatch(setUser(userData.user));
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
+    useEffect(() => {
+    (async function () {
+      const response = await tenantService.tenantById(user.tenant_id)
+      console.log('tenantById', response);
+
+      dispatch(setTenant(response.data))
+    })()
+  }, [user?.tenant_id]);
+
+  useEffect(() => {
+    if (tenant?.waba_id) {
+      (async function () {
+        const response = await WABussinessService.phoneNumbers(tenant.waba_id, tenant.access_token)
+        console.log('phoneNumbers', response);
+        dispatch(setPhoneNumbers(response.data))
+      })()
     }
-  }
-  const handleLogout = async () => {
-    try {
-      await userService.logout();
-      setUser(null);
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Force logout on client side even if server request fails
-      setUser(null);
-    }
-  }
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  }
+  }, [tenant?.waba_id])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -78,24 +74,19 @@ const Layout = () => {
     );
   }
   if (!user.id) {
-    return <Login onRegister={handleRegister} onLogin={handleLogin} />;
+    return <Login onLogin={handleLogin} />;
   }
   return (
     <div className='bg-background text-foreground'>
       <SidebarProvider>
-      <AppSidebar />
-      <main className='w-full'>
-        <Navbar
-          user={user}
-          onLogout={handleLogout}
-          onToggleSidebar={toggleSidebar}
-          sidebarOpen={sidebarOpen}
-        />
-        <main className="flex-1 p-6">
-          <Outlet />
+        <AppSidebar />
+        <main className='w-full'>
+          <Navbar />
+          <main className="flex-1 p-6">
+            <Outlet />
+          </main>
         </main>
-    </main>
-    </SidebarProvider>
+      </SidebarProvider>
     </div>
   )
 }

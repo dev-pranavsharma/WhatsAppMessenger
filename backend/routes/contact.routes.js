@@ -1,14 +1,5 @@
 import express from 'express';
-import {
-  getUserContacts,
-  getContactById,
-  createContact,
-  updateContact,
-  deleteContact,
-  bulkImportContacts,
-  getContactTags,
-  getContactStats
-} from '../controllers/contact.controller.js';
+import {contacts} from '../controllers/contact.controller.js'
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();

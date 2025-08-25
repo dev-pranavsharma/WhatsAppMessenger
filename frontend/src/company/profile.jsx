@@ -12,7 +12,7 @@ import {country,state,business_categories,timezones} from '../../data.json'
 import { tenantService } from '@/services/api';
 
 const CompanyProfile = () => {
-const tenant = useSelector(state=>state.user.tenant)
+const tenant = useSelector(state=>state.data.tenant)
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
