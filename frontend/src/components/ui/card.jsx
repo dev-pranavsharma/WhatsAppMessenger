@@ -37,7 +37,7 @@ function CardTitle({
   ...props
 }) {
   return (
-    <div
+    <h3
       data-slot="card-title"
       className={cn("leading-none font-semibold", className)}
       {...props} />

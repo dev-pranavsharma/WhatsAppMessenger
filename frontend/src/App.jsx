@@ -13,6 +13,7 @@ import TermsOfService from './pages/terms-of-service';
 const CompanyLayout = lazy(() => import("./company/layout"))
 const CompanySignup = lazy(() => import('./company/signup'))
 const CompanyProfile =  lazy(()=>import('./company/profile'))
+const AddContact = lazy(()=>import('./contacts/add-contact'))
 
 
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="/campaigns" element={<Campaigns />} />
             <Route path="/templates" element={<Templates />} />
             <Route path="/contacts" element={<Contacts />} />
+            <Route path="/contacts/add" element={<AddContact />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
             <Route path='/company/profile' element={<CompanyProfile />} />

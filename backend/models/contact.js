@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 
-const ContactSchema = new mongoose.Schema(
+ const ContactSchema = new mongoose.Schema(
   {
     name: String,
     email: String,
     phone: String,
   },
-  { collection: "contacts" } // map to existing collection
+  { collection: "contacts" }
 );
-
-export default mongoose.models.contact || mongoose.model("contact", ContactSchema);
+export const Contact = mongoose.model('Contact', ContactSchema);
