@@ -10,6 +10,7 @@ import templateRoutes from './routes/template.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import facebookRoutes from './routes/facebook.routes.js';
 import tenantRoutes from './routes/tenants.routes.ts';
+import libraryRoutes from './routes/library.controller.js'
 import cookieParser from 'cookie-parser';
 import mongoDB from './database/mongodb.js';
 
@@ -75,6 +76,7 @@ app.use('/api/templates', templateRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/facebook', facebookRoutes);
 app.use('/api/tenants', tenantRoutes);
+app.use('/api/library', libraryRoutes)
 
 /**
  * Health check endpoint

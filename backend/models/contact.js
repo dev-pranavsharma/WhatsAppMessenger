@@ -8,4 +8,7 @@ import mongoose from "mongoose";
   },
   { collection: "contacts" }
 );
+
+
 export const Contact = mongoose.model('Contact', ContactSchema);
+

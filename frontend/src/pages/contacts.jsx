@@ -160,7 +160,7 @@ const Contacts = ({ user }) => {
                     <SelectGroup>
                       <SelectLabel> Tags</SelectLabel>
                      {availableTags.map(tag => (
-                     <SelectItem value={tag.value}>{tag.title}</SelectItem>
+                     <SelectItem key={tag} value={tag.value}>{tag.title}</SelectItem>
                   ))}
                    </SelectGroup>
                   </SelectContent>

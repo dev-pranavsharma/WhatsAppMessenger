@@ -14,6 +14,9 @@ async function mongoDB() {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
+         console.log("Connected DB:", mongoose.connection.name);
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    console.log("Collections:", collections.map(c => c.name));
       console.log("✅ Mongoose connected");
     }
 
