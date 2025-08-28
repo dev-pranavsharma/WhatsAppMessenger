@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 // Create Access Token
 export function generateAccessToken(user) {
-  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "30m" });
+  return jwt.sign({ id: user.id, t_id:user.tenant_id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "30m" });
 }
 
 // Create Refresh Token

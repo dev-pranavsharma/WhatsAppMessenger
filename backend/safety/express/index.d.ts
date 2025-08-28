@@ -9,7 +9,7 @@ declare global {
         user_id: number;
         role_id: number;
         username: string;
-        tenant_id?: number;
+        t_id?: number;
       };
     }
   }

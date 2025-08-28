@@ -10,6 +10,8 @@ import Settings from './pages/settings';
 import LoadingSpinner from './components/loading-spinner';
 import PrivacyPolicy from './pages/privacy-policy';
 import TermsOfService from './pages/terms-of-service';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCountryCodes, fetchGenders } from './redux/slices/libSlice';
 const CompanyLayout = lazy(() => import("./company/layout"))
 const CompanySignup = lazy(() => import('./company/signup'))
 const CompanyProfile =  lazy(()=>import('./company/profile'))
@@ -20,6 +22,23 @@ const AddContact = lazy(()=>import('./contacts/add-contact'))
 const Layout = lazy(() => import('./layout'))
 
 function App() {
+
+  const dispatch = useDispatch()
+  const { genders,countryCodes, loading, error } = useSelector((state) => state.lib)
+  // const { countryCodes, loading, error } = useSelector((state) => state.lib)
+
+    useEffect(() => {
+      if(genders.length==0){
+        dispatch(fetchGenders())
+      }
+      if(countryCodes.length==0){
+        dispatch(fetchCountryCodes())
+      }
+    }, [dispatch])
+
+    console.log(loading,genders);
+    console.log(loading,countryCodes);
+    
 
   return (
     <Suspense fallback={<><LoadingSpinner /></>}>

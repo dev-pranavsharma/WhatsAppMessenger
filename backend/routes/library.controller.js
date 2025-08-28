@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { GetCountryCodes } from '@/controllers/library.controller.js';
+import { GetCountryCodes, GetGenders } from '@/controllers/library.controller.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -11,7 +11,8 @@ const router = express.Router();
  */
 router.use(authMiddleware);
 
-router.get('/contacts', GetCountryCodes);
+router.get('/countryCodes', GetCountryCodes);
+router.get('/genders', GetGenders)
 
 
 export default router;

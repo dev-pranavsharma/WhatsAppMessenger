@@ -186,8 +186,8 @@ export const tenantService = {
       body: payload
     })
   },
-  tenantById: async (tenant_id) => {
-    return apiRequest(`/tenants/${tenant_id}`)
+  tenantById: async () => {
+    return apiRequest(`/tenants/tenant`)
   }
 
 }
@@ -202,5 +202,6 @@ export const WABussinessService ={
 }
 
 export const libraryService = {
-  countryCodes:async()=>{return apiRequest('/library/contacts')}
+  countryCodes:async()=>{return apiRequest('/library/countryCodes')},
+  genders:async()=>{return apiRequest('/library/genders')}
 }

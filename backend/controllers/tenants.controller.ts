@@ -116,8 +116,7 @@ export async function AddTenant(req: Request<{}, {}, Tenant>, res: Response) {
 
 export async function TenantbyID(req:Request,res:Response){    
     try {
-        const tenant_id = req.params.tenant_id;
-      
+        const tenant_id = req.user.t_id;
         const tenantquery = `SELECT * FROM tenants WHERE id=?`
         const [results] = await pool.query<ResultSetHeader>(tenantquery,[tenant_id])        
             const response:  SuccessResponse = {

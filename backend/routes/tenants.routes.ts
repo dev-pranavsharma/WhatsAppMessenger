@@ -7,7 +7,7 @@ const routes = express.Router();
 routes.use(authMiddleware);
 
 routes.post('/add', AddTenant); // add tenant
-routes.get('/:tenant_id',TenantbyID); // get tenant
+routes.get('/tenant',TenantbyID); // get tenant
 routes.put('/update',UpdateTenant) // update tenant
 
 

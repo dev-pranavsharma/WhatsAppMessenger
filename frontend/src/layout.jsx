@@ -48,12 +48,14 @@ const Layout = () => {
     }
   };
     useEffect(() => {
+      if(user?.tenant_id){
     (async function () {
       const response = await tenantService.tenantById(user.tenant_id)
       console.log('tenantById', response);
 
       dispatch(setTenant(response.data))
     })()
+    }
   }, [user?.tenant_id]);
 
   useEffect(() => {

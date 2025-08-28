@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@/components/ui/accordion"
 import { Link } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/Input'
 import { useEffect, useState } from 'react'
@@ -14,24 +14,39 @@ import { useSelector } from 'react-redux'
 
 
 const AddContact = () => {
-  const tenant = useSelector(state => state.data.tenant)
+
+  const { genders, countryCodes } = useSelector((state) => state.lib);
+  const tenant = useSelector(state=>state.data.tenant)
+ 
+  
   const form = useForm({
     defaultValues: {
-      tenant_id: tenant.id,
-      name: null,
-      countryCode: '+91',
-      phone_number: null
+      tenant_id: tenant?.id,
+      gender:null,
+      full_name: null,
+      country_code: '+91',
+      phone_number: null,
+      email:null,
+      personal_details:{
+        occupation:null,
+        birthday:null,
+        company_name:null,
+        engagement:null,
+        anniversary:null
+      },
+      address_details:{
+        address_line_1:null,
+        address_line_2:null,
+        state:null,
+        country:null,
+        city:null,
+        pincode:null,
+      }
     }
   }
   )
-  const [countryCodes, setCountryCodes] = useState([])
-  useEffect(() => {
-    (async () => {
-      const response = await libraryService.countryCodes()
-      setCountryCodes(response.data)
-    })()
-  }, [])
-  console.log(countryCodes);
+  console.log(form.watch());
+  // console.log(genders,countryCodes);
 
   return (
     <>
@@ -78,12 +93,12 @@ const AddContact = () => {
             <div className='grid grid-cols-4 gap-5'>
               <FormField
                 control={form.control}
-                name="name"
+                name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contact Name</FormLabel>
+                    <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="name of contact" {...field} />
+                      <Input placeholder="full name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -96,7 +111,7 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Phone Code</FormLabel>
                     <FormControl>
-                      <Select defaultValue='+91' {...field}>
+                      <Select defaultValue='+91' onValueChange={field.onChange} value={field.value??""}   {...field}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select Country Code" />
                         </SelectTrigger>
@@ -142,41 +157,23 @@ const AddContact = () => {
                   </FormItem>
                 )}
               />
-            </div>
-            <Accordion type='single' collapsible className='w-full'>
-              <AccordionItem value='AdditionalInformation'>
-                <AccordionTrigger>Additional Information</AccordionTrigger>
-                <AccordionContent className="grid lg:grid-cols-4 grid-cols-2 gap-5">
-                  <FormField
-                    control={form.control}
-                    name="occupation"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name of contact" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
+              <FormField
                 control={form.control}
-                name="country_code"
+                name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Code</FormLabel>
+                    <FormLabel>Gender</FormLabel>
                     <FormControl>
-                      <Select defaultValue='+91' {...field}>
+                       <Select onValueChange={field.onChange} value={field.value??''} {...field}>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select Country Code" />
+                          <SelectValue placeholder="Select Gender" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectLabel>Country Codes</SelectLabel>
+                            <SelectLabel>Select Gender</SelectLabel>
                             {
-                              countryCodes && countryCodes.map(({ code, country }) => (
-                                <SelectItem value={code}>{code}{' '}{country}</SelectItem>
+                              genders && genders.map(({ code, label }) => (
+                                <SelectItem value={code}>{label}</SelectItem>
                               ))
                             }
                           </SelectGroup>
@@ -187,14 +184,45 @@ const AddContact = () => {
                   </FormItem>
                 )}
               />
+            </div>
+            <Accordion type='single' collapsible className='w-full'>
+              <AccordionItem value='PersonalDetails'>
+                <AccordionTrigger>Additional Information</AccordionTrigger>
+                <AccordionContent className="grid lg:grid-cols-4 grid-cols-2 gap-5">
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="personal_details.occupation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
+                        <FormLabel>Occupation</FormLabel>
                         <FormControl>
-                          <Input placeholder="name of contact" {...field} />
+                          <Input placeholder="occupation" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                control={form.control}
+                name="personal_details.birthday"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birthday</FormLabel>
+                    <FormControl>
+                      <Input type={'date'} {...field}/>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+                  <FormField
+                    control={form.control}
+                    name="personal_details.engagement"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Engagement</FormLabel>
+                        <FormControl>
+                          <Input type={'date'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -202,12 +230,12 @@ const AddContact = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="personal_details.anniversary"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
+                        <FormLabel>Anniversary</FormLabel>
                         <FormControl>
-                          <Input placeholder="name of contact" {...field} />
+                          <Input type={'date'} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -215,85 +243,91 @@ const AddContact = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="name"
+                    name="personal_details.company_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
+                        <FormLabel>Company Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="name of contact" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name of contact" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name of contact" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name of contact" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name of contact" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contact Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="name of contact" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
 
                 </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            <Accordion type='single' collapsible className='w-full'>
+              <AccordionItem value='AddressDetails'>
+              <AccordionTrigger>Address Details</AccordionTrigger>
+              <AccordionContent className="grid lg:grid-cols-4 grid-cols-2 gap-5">
+                                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="name of contact" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="name of contact" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="name of contact" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="name of contact" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="name of contact" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+              </AccordionContent>
               </AccordionItem>
             </Accordion>
             <Button type="submit">Submit</Button>
