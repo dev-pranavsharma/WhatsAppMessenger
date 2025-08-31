@@ -117,7 +117,10 @@ export const loginUser = async (req, res) => {
     }
 
     const user = users[0];
-
+    console.log(user);
+    const tenantQuery = 'SELECT id,waba_id,business_id FROM tenants WHERE id=?'
+    const tenant = await executeQuery(tenantQuery,[user.tenant_id])
+    
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -139,7 +142,10 @@ export const loginUser = async (req, res) => {
     });
     res.json({
       message: 'Login successful',
-      user: user,
+      data: {
+        user:user,
+        tenant:tenant?.[0]
+      }
     })
 
   } catch (error) {

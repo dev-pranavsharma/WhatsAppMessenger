@@ -24,7 +24,7 @@ const AddContact = () => {
       tenant_id: tenant?.id,
       gender:null,
       full_name: null,
-      country_code: '+91',
+      country_code:'+91',
       phone_number: null,
       email:null,
       personal_details:{
@@ -111,21 +111,21 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Phone Code</FormLabel>
                     <FormControl>
-                      <Select defaultValue='+91' onValueChange={field.onChange} value={field.value??""}   {...field}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select Country Code" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Country Codes</SelectLabel>
-                            {
-                              countryCodes && countryCodes.map(({ code, country }) => (
-                                <SelectItem value={code}>{code}{' '}{country}</SelectItem>
-                              ))
-                            }
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+                        <Select value={field.value??''} onValueChange={field.onChange}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Phone Code" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Phone Codes</SelectLabel>
+                              {
+                                countryCodes && countryCodes.map(({code,country})=>(
+                                    <SelectItem value={code}>{country}</SelectItem>
+                                ))
+                              }
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -164,7 +164,7 @@ const AddContact = () => {
                   <FormItem>
                     <FormLabel>Gender</FormLabel>
                     <FormControl>
-                       <Select onValueChange={field.onChange} value={field.value??''} {...field}>
+                       <Select onValueChange={field.onChange} value={field.value??''}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select Gender" />
                         </SelectTrigger>

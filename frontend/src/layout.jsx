@@ -40,23 +40,14 @@ const Layout = () => {
 
   const handleLogin = async (credentials) => {
     try {
-      const userData = await userService.login(credentials);
-      dispatch(setUser(userData.user))
-      return { success: true };
+      const response = await userService.login(credentials);
+      dispatch(setUser(response.data.user))
+      dispatch(setTenant(response.data.tenant))
+      return { success: true }
     } catch (error) {
       return { success: false, error: error.message };
     }
-  };
-    useEffect(() => {
-      if(user?.tenant_id){
-    (async function () {
-      const response = await tenantService.tenantById(user.tenant_id)
-      console.log('tenantById', response);
-
-      dispatch(setTenant(response.data))
-    })()
-    }
-  }, [user?.tenant_id]);
+  }
 
   useEffect(() => {
     if (tenant?.waba_id) {
