@@ -14,21 +14,18 @@ import {
 } from 'lucide-react';
 import { campaignService, contactService, templateService, tenantService, WABussinessService } from '../services/api';
 import LoadingSpinner from '../components/loading-spinner';
-import { getCookie } from '../utils/Cookies';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPhoneNumbers, setTenant } from '../redux/slices/dataSlice';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Dashboard = () => {
-  const dispatch = useDispatch()
-  const user = useSelector(state => state.data.user)
-  const tenant = useSelector(state => state.data.tenant)
-  const phone_numbers = useSelector(state => state.data.phoneNumbers)
-  const templates = useSelector(state=>state.data.templates)
+ const queryClient = useQueryClient()
+  const tenant = queryClient.getQueryData(["tenant"]);
+  const user = queryClient.getQueryData(["session"]);
+  const phone_numbers = queryClient.getQueryData(["phoneNumbers"]);
   const [stats, setStats] = useState({
     campaigns: { total: 0, active: 0, completed: 0 },
     contacts: { total: 0, opted_in: 0 },
-    templates: { total: templates.length, approved: 0 }
+    templates: { total: 0, approved: 0 }
   });
   const [recentCampaigns, setRecentCampaigns] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -55,7 +52,6 @@ const Dashboard = () => {
       </span>
     );
   };
-  console.log(phone_numbers);
 
 
   // if (loading) {
@@ -111,32 +107,32 @@ const Dashboard = () => {
         <Card className='py-3'>
           <CardHeader>
             <CardDescription>Total Campaigns</CardDescription>
-            <CardTitle><h2>{stats.campaigns.total}</h2></CardTitle>
+            <CardTitle><h2>{stats?.campaigns.total}</h2></CardTitle>
           </CardHeader>
-          <CardFooter> {stats.campaigns.active} active, {stats.campaigns.completed} completed </CardFooter>
+          <CardFooter> {stats?.campaigns.active} active, {stats.campaigns.completed} completed </CardFooter>
 
         </Card>
 
         <Card className='py-3'>
           <CardHeader>
             <CardDescription>Total Contacts</CardDescription>
-            <CardTitle><h2>{stats.contacts.total_contacts || 0}</h2></CardTitle>
+            <CardTitle><h2>{stats?.contacts.total_contacts || 0}</h2></CardTitle>
           </CardHeader>
-          <CardFooter>{stats.contacts.opted_in_contacts || 0} opted in</CardFooter>
+          <CardFooter>{stats?.contacts.opted_in_contacts || 0} opted in</CardFooter>
         </Card>
 
         <Card className='py-3'>
           <CardHeader>
             <CardDescription>Message Templates</CardDescription>
-            <CardTitle><h2>{stats.templates.total}</h2></CardTitle>
+            <CardTitle><h2>{stats?.templates.total}</h2></CardTitle>
           </CardHeader>
-          <CardFooter>{stats.templates.approved} approved</CardFooter>
+          <CardFooter>{stats?.templates.approved} approved</CardFooter>
         </Card>
 
         <Card className='py-3'>
           <CardHeader>
             <CardDescription>Delivery Rate</CardDescription>
-            <CardTitle><h2>{stats.contacts.opt_in_rate || '0'}%</h2></CardTitle>
+            <CardTitle><h2>{stats?.contacts.opt_in_rate || '0'}%</h2></CardTitle>
           </CardHeader>
           <CardFooter>Last 30 days</CardFooter>
         </Card>

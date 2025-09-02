@@ -10,14 +10,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/Input'
 import { useEffect, useState } from 'react'
 import { libraryService } from '@/services/api'
-import { useSelector } from 'react-redux'
 
 
 const AddContact = () => {
-
-  const { genders, countryCodes } = useSelector((state) => state.lib);
-  const tenant = useSelector(state=>state.data.tenant)
- 
   
   const form = useForm({
     defaultValues: {

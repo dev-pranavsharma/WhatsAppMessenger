@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const Login = ({ onLogin }) => {
+  const query = useQueryClient()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -30,10 +32,6 @@ const Login = ({ onLogin }) => {
     if (error) setError('');
   };
 
-  /**
-   * Handle form submission
-   * @param {Event} e - Form submit event
-   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,7 +39,8 @@ const Login = ({ onLogin }) => {
 
     try {
       const result = await onLogin(formData);
-
+      console.log(result);
+      
       if (!result.success) {
         setError(result.error || (isRegister ? 'Registration failed' : 'Login failed'));
       }

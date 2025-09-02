@@ -5,7 +5,6 @@ import LoadingSpinner from '../components/loading-spinner';
 import WhatsAppSignupPopup from '../components/whatsapp-signup';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { useSelector } from 'react-redux';
 
 const Settings = ({ user, onUserUpdate }) => {
   const [activeTab, setActiveTab] = useState('profile');

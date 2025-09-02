@@ -1,65 +1,57 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import LoadingSpinner from './components/loading-spinner';
 import { tenantService, userService, WABussinessService } from './services/api';
 import Login from './pages/login';
-import { getCookie, setCookie } from './utils/Cookies';
-import { setPhoneNumbers, setTenant, setUser } from './redux/slices/dataSlice';
 import { SidebarProvider, SidebarTrigger } from '@components/ui/sidebar';
 import AppSidebar from './components/sidebar';
 import Navbar from '@components/navbar';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const Layout = () => {
-  const dispatch = useDispatch()
-  const user = useSelector(state => state.data.user)
-  const tenant = useSelector(state => state.data.tenant)
-  const phone_numbers = useSelector(state => state.data.phoneNumbers)
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient()
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
   /**
    * Check if user is authenticated on app load
    */
 
-  const checkAuthStatus = async () => {
-    try {
-      const userData = await userService.getCurrentUser();
-      dispatch(setUser(userData))
-    } catch (error) {
-      
-      // User not authenticated, stay on login page
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+    const { data:user, isLoading:isUserLoading, isError } = useQuery({
+    queryKey: ["session"],
+    queryFn: userService.getCurrentUser, // calls /me
+    retry: false,
+  });
 
-  const handleLogin = async (credentials) => {
-    try {
-      const response = await userService.login(credentials);
-      dispatch(setUser(response.data.user))
-      dispatch(setTenant(response.data.tenant))
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
+
+  const loginMutation = useMutation({
+  mutationFn: userService.login,
+  onSuccess: (response) => {
+    queryClient.setQueryData(["user"], response.data.user);
+    queryClient.setQueryData(["tenant"], response.data.tenant);
+  },
+  onError: (error) => {
+    console.error("Login failed:", error.message);
+   },
+  })
+  const handleLogin = (credentials) => {
+    loginMutation.mutate(credentials)
   }
 
-  useEffect(() => {
-    if (tenant?.waba_id) {
-      (async function () {
-        const response = await WABussinessService.phoneNumbers(tenant.waba_id, tenant.access_token)
-        console.log('phoneNumbers', response);
-        dispatch(setPhoneNumbers(response.data))
-      })()
-    }
-  }, [tenant?.waba_id])
+  const tenant = queryClient.getQueryData(["tenant"]);
+  // const user = queryClient.getQueryData("user");
 
-  if (loading) {
+  const { data: phoneNumbers,isLoading:isPhoneNumberLoading, error } = useQuery({
+    queryKey: ["phoneNumbers"], // unique per tenant
+    queryFn: () =>
+      WABussinessService.phoneNumbers(
+        tenant.waba_id,
+        tenant.access_token
+      ),
+    enabled: tenant?.waba_id, // ✅ only run if tenant exists
+  });
+
+  console.log(user);
+  
+  if (isUserLoading || isPhoneNumberLoading ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="lg" />

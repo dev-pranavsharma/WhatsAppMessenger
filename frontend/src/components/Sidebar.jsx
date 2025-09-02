@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BarChart3, MessageSquare, Users, FileText, Settings, LayoutDashboard, ChevronLeft, ChevronRight, Check, BadgeCheck, CheckCheck, User2, ChevronUp, Building2, ChevronDown, MoreHorizontal, MoreVertical, Sheet, DollarSign, DoorOpen, ChevronsUpDownIcon, Phone, ChevronsUpDown, PlusCircle } from 'lucide-react';
 import { getCookie } from '../utils/Cookies';
-import { useSelector } from 'react-redux';
 import { Avatar, AvatarImage, AvatarFallback } from '@components/ui/avatar';
 import { Sidebar, SidebarContent, SidebarHeader } from '@components/ui/sidebar';
 import { SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarInput, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
@@ -26,12 +25,14 @@ import {
 } from "@/components/ui/popover"
 import { cn } from '@/lib/utils';
 import { userService } from '@/services/api';
+import { useQueryClient } from '@tanstack/react-query';
 
 const AppSidebar = ({ isOpen, onToggle }) => {
-  const user = useSelector(state => state.data.user)
-  const tenant = useSelector(state => state.data.tenant)
-  const phone_numbers = useSelector(state => state.data.phoneNumbers)
+  const queryClient = useQueryClient()
   const location = useLocation();
+  const tenant = queryClient.getQueryData(["tenant"]);
+  const user = queryClient.getQueryData(["session"]);
+  const phone_numbers = queryClient.getQueryData(["phoneNumbers"]);
   /**
    * Navigation menu items with icons and paths
    */

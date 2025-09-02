@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Send, Eye, Search, Filter, BadgeCheckIcon } from 'lucide-react';
 import { templateService } from '../services/api';
 import LoadingSpinner from '../components/loading-spinner';
-import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { setTemplates } from '../redux/slices/dataSlice';
 import { Skeleton } from '../components/ui/skeleton';
 import Wrapper from '../elements/wrapper';
 import { Badge } from '../components/ui/badge';
@@ -55,9 +53,6 @@ import { Input } from '@/components/ui/Input';
     )
   }
 const Templates = () => {
-  const dispatch = useDispatch()
-  const tenant = useSelector(state => state.data.tenant)
-  const templates = useSelector(state=>state.data.templates)
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -69,8 +64,7 @@ const Templates = () => {
   const loadTemplates = async () => {
       try {
         setLoading(true);
-        const data = await templateService.getTemplates({ waba_id: tenant.waba_id, access_token: tenant.access_token });
-        dispatch(setTemplates(data.data))
+        const data = await templateService.getTemplates({ waba_id: tenant.waba_id, access_token: tenant.access_token })
       } catch (err) {
         setError('Failed to load templates');
         console.error('Template loading error:', err);

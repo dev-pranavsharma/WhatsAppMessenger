@@ -25,7 +25,6 @@ const CreateCampaign = ({ campaign }) => {
 
   const onSubmit = (data) => {
     console.log("Updated Campaign:", data);
-    // You can dispatch Redux or call API here
     setOpen(false);
   };
 
