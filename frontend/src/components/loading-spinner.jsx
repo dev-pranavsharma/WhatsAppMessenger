@@ -7,7 +7,7 @@ const LoadingSpinner = ({ size = 'md', className = '' }) => {
 
   return (
     <div className='flex w-full justify-center'>
-    <div className={`spinner ${sizeClasses[size]} ${className}`}></div>
+    <div className={`spinner  ${sizeClasses[size]} ${className}`}></div>
     </div>
   );
 };

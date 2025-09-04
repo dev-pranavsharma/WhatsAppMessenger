@@ -193,12 +193,15 @@ export const tenantService = {
 }
 
 export const WABussinessService ={
-  phoneNumbers: async (waba_id,access_token) =>{ return apiRequest(`/tenants/${waba_id}/phone_numbers`,{
+  phoneNumbers: async (waba_id,access_token) =>{ 
+    const response = await apiRequest(`/tenants/${waba_id}/phone_numbers`,{
     method:"POST",
     body:{
       access_token:access_token
     }
-  })}
+  })
+  return response.data
+}
 }
 
 export const libraryService = {

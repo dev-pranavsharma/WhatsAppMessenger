@@ -46,19 +46,19 @@ const Layout = () => {
         tenant.waba_id,
         tenant.access_token
       ),
-    enabled: tenant?.waba_id, // ✅ only run if tenant exists
+    enabled: !!tenant?.waba_id, // ✅ only run if tenant exists
   });
 
-  console.log(user);
+  console.log(tenant,user);
   
-  if (isUserLoading || isPhoneNumberLoading ) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
-  if (!user.id) {
+  // if (isUserLoading || isPhoneNumberLoading ) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center">
+  //       <p className='text-foreground'>loading....</p>
+  //     </div>
+  //   );
+  // }
+  if (!user?.id) {
     return <Login onLogin={handleLogin} />;
   }
   return (

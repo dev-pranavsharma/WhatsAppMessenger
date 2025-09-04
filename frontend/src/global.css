@@ -46,6 +46,7 @@ h5{
   border: 2px solid var(--gray-300);
   border-radius: 50%;
   border-top-color: var(--primary-600);
+  background-color: var(--gray-300);
   animation: spin 1s ease-in-out infinite;
 }
 

@@ -6,56 +6,30 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
 
 const Login = ({ onLogin }) => {
   const query = useQueryClient()
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  /**
-   * Handle form input changes
-   * @param {Event} e - Input change event
-   */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (error) setError('');
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      const result = await onLogin(formData);
-      console.log(result);
-      
-      if (!result.success) {
-        setError(result.error || (isRegister ? 'Registration failed' : 'Login failed'));
-      }
-    } catch (err) {
-      setError('An unexpected error occurred');
-    } finally {
-      setLoading(false);
+  const form = useForm({
+    defaultValues:{
+      email: null,
+      password: null
     }
+  })
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { mutate, isPending, data, error } = useMutation({
+    mutationFn: onLogin,
+    onSuccess: (data) => {
+      console.log("Login success:", data);
+    },
+  });
+  const onSubmit = (values) => {
+    mutate(values);
   };
 
-  console.log(formData);
-
-  /**
-   * Toggle password visibility
-   */
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -111,30 +85,50 @@ const Login = ({ onLogin }) => {
             <CardDescription>Login in to your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="flex-col" onSubmit={handleSubmit}>
-              <div className="space-y-10">
+            <Form {...form} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)}>
                 {/* Username Field */}
-                <div>
-                  <Label htmlFor="email"> Email </Label>
-                  <Input id="email" name="email" type="text" required value={formData.email} onChange={handleChange} className="form-input" placeholder="Enter your email" disabled={loading} />
-                </div>
-
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="text" required placeholder="Enter your email" disabled={isPending} />
+                      </FormControl>
+                      <FormDescription>please type your login email</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 {/* Password Field */}
-                <div>
-                  <Label htmlFor="password"> Password </Label>
-                  <div className="relative flex gap-x-5">
-                    <Input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={handleChange} className="form-input pr-10" placeholder="Enter your password" disabled={loading} />
-                    <Button type="button" className='absolute right-0' variant='ghost' onClick={togglePasswordVisibility} disabled={loading} >
-                      {showPassword ? (
+                 <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                    <div className='relative'>
+                    <Input {...field} id="password" name="password" type={showPassword ? 'text' : 'password'} required placeholder="Enter your password" disabled={isPending} />
+                    <Button type="button" className='absolute right-0' variant='ghost' onClick={togglePasswordVisibility} disabled={isPending} >
+                      {showPassword && showPassword ? (
                         <EyeOff className="w-4 h-4" />
                       ) : (
                         <Eye className="w-4 h-4" />
                       )}
                     </Button>
-                  </div>
-                </div>
+                    </div>
+                      </FormControl>
+                      <FormDescription>please type your email password</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 
                 {
-                  loading ? (
+                  isPending ? (
                     <Button disabled className='w-full'>
                       <Loader2Icon className="animate-spin" />
                       logging
@@ -142,17 +136,10 @@ const Login = ({ onLogin }) => {
                   ) : (
                     <Button className='w-full' type="submit"> log in </Button>
                   )}
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="alert alert-error">
-                  {error}
-                </div>
-              )}
-            </form>
+              </form>
+            </Form>
           </CardContent>
-          <CardFooter className=''>
+          <CardFooter>
             <Button className='w-full' variant='secondary' asChild>
               <Link to='/company/signup'>Don't have an account? Create one</Link>
             </Button>
