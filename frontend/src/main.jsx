@@ -13,7 +13,14 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from './components/theme-provider'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+    queries: {
+      staleTime: Infinity,  // always fresh
+      cacheTime: Infinity,  // never auto-remove
+    },
+  },
+})
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

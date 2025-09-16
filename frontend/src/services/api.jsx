@@ -3,10 +3,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL + '/api';
 
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  console.log(url);
-  console.log(import.meta.env);
-
-  
   const config = {
     credentials: 'include', // Include cookies for session handling
     headers: {
@@ -34,7 +30,8 @@ const apiRequest = async (endpoint, options = {}) => {
     if (!response.ok) {
       throw new Error(data.message || `HTTP error! status: ${response.status}`);
     }
-
+    console.log(data);
+    
     return data;
   } catch (error) {
     console.error('API request failed:', error);
@@ -207,4 +204,13 @@ export const WABussinessService ={
 export const libraryService = {
   countryCodes:async()=>{return apiRequest('/library/countryCodes')},
   genders:async()=>{return apiRequest('/library/genders')}
+}
+
+export const ContactServices = {
+  addContact:async(payload)=>{
+    const response = await apiRequest('/contacts/add',{
+      method:"POST",
+      body:payload
+    })
+  }
 }

@@ -30,8 +30,9 @@ import { useQueryClient } from '@tanstack/react-query';
 const AppSidebar = ({ isOpen, onToggle }) => {
   const queryClient = useQueryClient()
   const location = useLocation();
-  const tenant = queryClient.getQueryData(["tenant"]);
-  const user = queryClient.getQueryData(["session"]);
+  const session = queryClient.getQueryData(["session"]);
+  const user = session?.user
+  const tenant = session?.tenant
   const phone_numbers = queryClient.getQueryData(["phoneNumbers"]);
   /**
    * Navigation menu items with icons and paths
@@ -92,9 +93,6 @@ const AppSidebar = ({ isOpen, onToggle }) => {
       description: 'Account settings'
     }
   ];
-
-  console.log('user', user);
-  console.log('tenant', tenant);
 
   const isActivePath = (path) => {
     return location.pathname === path;
@@ -167,6 +165,7 @@ const AppSidebar = ({ isOpen, onToggle }) => {
                           key={i}
                           value={data.id}
                           onSelect={(currentValue) => {
+                            queryClient.setQueryData(['active_phone_number'],data)
                             setPhoneNumberId(currentValue === phone_number_id ? "" : currentValue)
                             setOpenPhoneOptions(false)
                           }}

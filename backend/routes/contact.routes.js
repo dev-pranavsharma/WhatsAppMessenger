@@ -1,5 +1,5 @@
 import express from 'express';
-import {GetContacts} from '../controllers/contact.controller.js'
+import {AddContact, GetContacts} from '../controllers/contact.controller.js'
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -10,7 +10,8 @@ const router = express.Router();
  */
 router.use(authMiddleware);
 
-router.get(':/tenant_id/:waba_id/contacts', GetContacts);
+router.get('/:tenant_id/:pn_id', GetContacts);
+router.post('/add', AddContact);
 // router.get('/stats', getContactStats);
 // router.get('/tags', getContactTags);
 // router.get('/:id', getContactById);

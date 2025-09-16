@@ -208,9 +208,18 @@ export const getCurrentUser = async (req, res) => {
     if (users.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
+     const user = users[0];
+    console.log(user);
+    const tenantQuery = 'SELECT * FROM tenants WHERE id=?'
+    const tenant = await executeQuery(tenantQuery,[user.tenant_id])
     console.log('------------------213:user------------------\n', users);
-
-    res.json(users[0]);
+    res.json({
+      message: 'session',
+      data: {
+        user:users[0],
+        tenant:tenant?.[0]
+      }
+    })
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ message: 'Internal server error' });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MessageSquare, Eye, EyeOff, Loader2Icon } from 'lucide-react';
 import LoadingSpinner from '../components/loading-spinner';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin ,loading }) => {
+  const navigate = useNavigate()
   const query = useQueryClient()
   const form = useForm({
     defaultValues:{
@@ -20,27 +21,12 @@ const Login = ({ onLogin }) => {
   })
   const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate, isPending, data, error } = useMutation({
-    mutationFn: onLogin,
-    onSuccess: (data) => {
-      console.log("Login success:", data);
-    },
-  });
   const onSubmit = (values) => {
-    mutate(values);
+    onLogin(values);
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-  };
-
-  /**
-   * Switch between login and register modes
-   */
-  const toggleMode = () => {
-    setIsRegister(!isRegister);
-    setError('');
-    setFormData({ username: '', password: '' });
   };
 
 
@@ -85,8 +71,8 @@ const Login = ({ onLogin }) => {
             <CardDescription>Login in to your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form} className="space-y-6">
-              <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Form {...form}>
+              <form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)}>
                 {/* Username Field */}
                 <FormField
                   control={form.control}
@@ -95,9 +81,8 @@ const Login = ({ onLogin }) => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input {...field} type="text" required placeholder="Enter your email" disabled={isPending} />
+                        <Input {...field} type="text" required placeholder="Enter your email" disabled={loading} />
                       </FormControl>
-                      <FormDescription>please type your login email</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -111,8 +96,8 @@ const Login = ({ onLogin }) => {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                     <div className='relative'>
-                    <Input {...field} id="password" name="password" type={showPassword ? 'text' : 'password'} required placeholder="Enter your password" disabled={isPending} />
-                    <Button type="button" className='absolute right-0' variant='ghost' onClick={togglePasswordVisibility} disabled={isPending} >
+                    <Input {...field} id="password" name="password" type={showPassword ? 'text' : 'password'} required placeholder="Enter your password" disabled={loading} />
+                    <Button type="button" className='absolute top-0 cursor-pointer right-0' variant='ghost' onClick={togglePasswordVisibility} disabled={loading} >
                       {showPassword && showPassword ? (
                         <EyeOff className="w-4 h-4" />
                       ) : (
@@ -121,20 +106,19 @@ const Login = ({ onLogin }) => {
                     </Button>
                     </div>
                       </FormControl>
-                      <FormDescription>please type your email password</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                  
                 {
-                  isPending ? (
+                  loading ? (
                     <Button disabled className='w-full'>
                       <Loader2Icon className="animate-spin" />
                       logging
                     </Button>
                   ) : (
-                    <Button className='w-full' type="submit"> log in </Button>
+                    <Button variant='default' className='w-full' type="submit"> Log In </Button>
                   )}
               </form>
             </Form>

@@ -18,9 +18,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useQueryClient } from '@tanstack/react-query';
 
 const Dashboard = () => {
- const queryClient = useQueryClient()
-  const tenant = queryClient.getQueryData(["tenant"]);
-  const user = queryClient.getQueryData(["session"]);
+  const queryClient = useQueryClient()
+  const session = queryClient.getQueryData(["session"]);
+  const user = session?.user
+  const tenant = session?.tenant
   const phone_numbers = queryClient.getQueryData(["phoneNumbers"]);
   const [stats, setStats] = useState({
     campaigns: { total: 0, active: 0, completed: 0 },
@@ -30,9 +31,6 @@ const Dashboard = () => {
   const [recentCampaigns, setRecentCampaigns] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  console.log(user);
-
-
 
   const getStatusBadge = (status) => {
     const statusConfig = {
