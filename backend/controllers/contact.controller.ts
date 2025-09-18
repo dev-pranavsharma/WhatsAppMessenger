@@ -4,14 +4,24 @@ import {Contact} from "../models/contact"
 import { ErrorResponse, SuccessResponse } from "../safety/validators"
 
 export const GetContacts = async(req:Request,res:Response)=>{
-    const tenant_id = req.params.tenant_id
-    const waba_id = req.params.waba_id
+    const t_id = req.query.t_id
+    const pn_id = req.query.pn_id
     try {
-    const contacts = await Contact.find({tenant_id:tenant_id,waba_id:waba_id}); // fetch all contacts
-    res.json(contacts)
-    } catch (err) {
-      console.error("Error fetching contacts:", err);
-      res.status(500).json({ message: "Server error" });
+    const contacts = await Contact.find({t_id:t_id,pn_id:pn_id}); // fetch all contacts
+    const response:SuccessResponse = {
+        success:true,
+        message:'Contact Added Successfully',
+        data:contacts
+    }
+    res.status(201).json(response);
+    } catch (error) {
+      const status = error.statusCode || 500;
+      const message = error.message || 'Something went wrong. Please contact support'; 
+      const response:ErrorResponse={
+        status:status,
+        message:message
+      }
+    res.status(500).json(response);
     }
 }
 export const AddContact = async (req: Request, res: Response) => {

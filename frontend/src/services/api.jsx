@@ -207,6 +207,7 @@ export const libraryService = {
 }
 
 export const ContactServices = {
+  contactsList:async(payload)=>{return apiRequest(`/contacts/list?pn_id=${payload.pn_id}&t_id=${payload.t_id}`)},
   addContact:async(payload)=>{
     const response = await apiRequest('/contacts/add',{
       method:"POST",

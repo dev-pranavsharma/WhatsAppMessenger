@@ -10,7 +10,7 @@ const router = express.Router();
  */
 router.use(authMiddleware);
 
-router.get('/:tenant_id/:pn_id', GetContacts);
+router.get('/list', GetContacts);
 router.post('/add', AddContact);
 // router.get('/stats', getContactStats);
 // router.get('/tags', getContactTags);

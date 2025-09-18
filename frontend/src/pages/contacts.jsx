@@ -7,10 +7,28 @@ import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '@/comp
 import { Input } from '@/components/ui/Input';
 import { Select, SelectItem, SelectTrigger,SelectContent, SelectValue, SelectGroup, SelectLabel} from '@/components/ui/select';
 import { Link } from 'react-router-dom';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+
 
 const Contacts = ({ user }) => {
-  const [contacts, setContacts] = useState([]);
-  const [filteredContacts, setFilteredContacts] = useState([]);
+  const queryClient = useQueryClient()
+  const session = queryClient.getQueryData(['session'])
+  const { data: active_phone_number } = useQuery({
+    queryKey: ['active_phone_number'],
+    queryFn: () => undefined,
+    enabled: false,
+  })
+  const tenant = session?.tenant
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,12 +37,20 @@ const Contacts = ({ user }) => {
   const [stats, setStats] = useState({});
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
+  
 
 
-  /**
-   * Handle contact deletion
-   * @param {number} contactId - Contact ID
-   */
+   const { data: contacts } = useQuery({
+    queryKey: [`contacts_${tenant?.id}_${active_phone_number?.id}`],
+    queryFn:async () => {
+      const response = await contactService.contactsList({t_id:tenant?.id,pn_id:active_phone_number?.id})
+      return response.data
+    },
+    enabled: Boolean(active_phone_number?.id),
+    staleTime: Infinity,
+  })
+  console.log(tenant,active_phone_number,contacts);
+
   const handleDeleteContact = async (contactId) => {
     if (!window.confirm('Are you sure you want to delete this contact?')) {
       return;
@@ -38,24 +64,6 @@ const Contacts = ({ user }) => {
     }
   };
 
-  /**
-   * Handle bulk import
-   * @param {Array} importedContacts - Array of contact objects
-   */
-  const handleBulkImport = async (importedContacts) => {
-    try {
-      const result = await contactService.bulkImport(importedContacts);
-      await loadContactsData();
-      setShowImportModal(false);
-      
-      // Show import results
-      if (result.results.errors.length > 0) {
-        setError(`Import completed with errors: ${result.results.errors.slice(0, 3).join(', ')}`);
-      }
-    } catch (err) {
-      setError(`Failed to import contacts: ${err.message}`);
-    }
-  };
 
   /**
    * Format phone number for display
@@ -118,57 +126,25 @@ const Contacts = ({ user }) => {
           {error}
         </div>
       )}
-
-      {/* Statistics cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="card-body">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>{stats.total_contacts || 0}</CardTitle>
-                <CardDescription>Total Contacts</CardDescription>
-              </div>
-              <div className="w-12 h-12 -100 rounded-lg flex items-center justify-center">
-                <Tag className="w-6 h-6 text-primary-600" />
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 " />
-                <Input
-                  type="text"
-                  placeholder="Search contacts by name, phone, or email..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="form-input pl-10"
-                />
-              </div>
-            </div>
-            </div>
-
-            {/* Tag filter */}
-            <div className="md:w-48">
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select Tag'/>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel> Tags</SelectLabel>
-                     {availableTags.map(tag => (
-                     <SelectItem key={tag} value={tag.value}>{tag.title}</SelectItem>
-                  ))}
-                   </SelectGroup>
-                  </SelectContent>
-                </Select>
-            </div>
-
-            {/* Export button */}
-      </div>
+      <Table>
+  <TableCaption>A list of your recent invoices.</TableCaption>
+  <TableHeader>
+    <TableRow>
+      <TableHead className="w-[100px]">Invoice</TableHead>
+      <TableHead>Status</TableHead>
+      <TableHead>Method</TableHead>
+      <TableHead className="text-right">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell className="font-medium">INV001</TableCell>
+      <TableCell>Paid</TableCell>
+      <TableCell>Credit Card</TableCell>
+      <TableCell className="text-right">$250.00</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
     </div>
   );
 };
