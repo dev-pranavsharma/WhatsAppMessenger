@@ -13,6 +13,7 @@ import { ContactServices, libraryService } from '@/services/api'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { AlertCircleIcon, CheckCircle2Icon, Loader2Icon } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import ExcelDownloader from '@/utils/Export'
 
 
 const AddContact = () => {
@@ -152,6 +153,7 @@ const AddContact = () => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+      <ExcelDownloader/>
       <Card className={'mt-10'}>
         <CardHeader>
           <CardTitle>Add contact for {active_phone_number?.verified_name}</CardTitle>
